@@ -83,6 +83,28 @@ function getSongData(button) {
 
 
 /* =========================================================
+   FIND SONG CARD
+   ========================================================= */
+
+function findSongCard(songName) {
+
+    let found = null;
+
+    document
+        .querySelectorAll(".song-card")
+        .forEach(card => {
+
+            if (card.dataset.song === songName) {
+                found = card;
+            }
+
+        });
+
+    return found;
+}
+
+
+/* =========================================================
    RECENTLY PLAYED
    ========================================================= */
 
@@ -120,8 +142,13 @@ function playSong(data) {
 
     currentData = data;
 
-    currentSong.textContent = data.song;
-    currentArtist.textContent = data.artist;
+    if (currentSong) {
+        currentSong.textContent = data.song;
+    }
+
+    if (currentArtist) {
+        currentArtist.textContent = data.artist;
+    }
 
     saveRecentlyPlayed(data);
 
@@ -179,9 +206,7 @@ function playSong(data) {
 
 
     if (data.card) {
-
         data.card.classList.add("now-playing");
-
     }
 
 
@@ -243,6 +268,7 @@ async function startListening() {
 
         const queue = result.queue || [];
 
+
         if (queue.length > 0) {
 
             await nextSong(false);
@@ -261,6 +287,7 @@ async function startListening() {
             firstCard.querySelector(".poster-play") ||
             firstCard.querySelector(".card-buttons button");
 
+
         if (playButton) {
             playCard(playButton);
         }
@@ -276,13 +303,16 @@ async function startListening() {
 
         if (!firstCard) return;
 
+
         const playButton =
             firstCard.querySelector(".poster-play") ||
             firstCard.querySelector(".card-buttons button");
 
+
         if (playButton) {
             playCard(playButton);
         }
+
     }
 }
 
@@ -359,12 +389,14 @@ audio.addEventListener("timeupdate", () => {
 
     if (!audio.duration) return;
 
+
     if (progressBar) {
 
         progressBar.value =
             (audio.currentTime / audio.duration) * 100;
 
     }
+
 
     if (currentTime) {
 
@@ -458,6 +490,7 @@ function updateVolumeIcon() {
         document.getElementById("volumeIcon");
 
     if (!icon) return;
+
 
     if (audio.volume === 0) {
 
@@ -646,103 +679,219 @@ async function loadQueue() {
 
 
 /* =========================================================
-   NEXT SONG
+   NEXT SONG — FIXED
    ========================================================= */
 
 async function nextSong(auto = false) {
 
     try {
 
-        const response =
-            await fetch("/play-next", {
-                method: "POST"
-            });
+        /* -------------------------------------------------
+           FIRST: CHECK SERVER QUEUE
+           ------------------------------------------------- */
 
-        const result =
-            await response.json();
+        const queueResponse =
+            await fetch("/queue");
 
+        const queueResult =
+            await queueResponse.json();
 
-        if (!result.success) {
-
-            await loadQueue();
-
-            if (!auto) {
-
-                showToast(
-                    "Your queue is empty."
-                );
-
-            }
-
-            return;
-        }
+        const queue =
+            queueResult.queue || [];
 
 
-        const queuedSong =
-            result.song;
+        /* -------------------------------------------------
+           IF QUEUE HAS SONGS → PLAY QUEUED SONG
+           ------------------------------------------------- */
 
+        if (queue.length > 0) {
 
-        const cards =
-            document.querySelectorAll(".song-card");
+            const nextResponse =
+                await fetch("/play-next", {
+                    method: "POST"
+                });
 
+            const nextResult =
+                await nextResponse.json();
 
-        let matchingCard = null;
-
-
-        cards.forEach(card => {
 
             if (
-                card.dataset.song ===
-                queuedSong.song
+                nextResult.success &&
+                nextResult.song
             ) {
 
-                matchingCard = card;
+                const queuedSong =
+                    nextResult.song;
+
+
+                const matchingCard =
+                    findSongCard(
+                        queuedSong.song
+                    );
+
+
+                if (matchingCard) {
+
+                    playSong({
+
+                        card: matchingCard,
+
+                        song: queuedSong.song,
+
+                        artist: queuedSong.artist,
+
+                        file: matchingCard.dataset.file,
+
+                        image: matchingCard.dataset.image
+
+                    });
+
+                    await loadQueue();
+
+                    return;
+
+                }
 
             }
 
-        });
-
-
-        if (!matchingCard) {
-
-            await loadQueue();
-
-            showToast(
-                "Song card not found."
-            );
-
-            return;
         }
 
+
+        /* -------------------------------------------------
+           QUEUE EMPTY → USE SONG CARDS
+           ------------------------------------------------- */
+
+        const cards =
+            [...document.querySelectorAll(".song-card")];
+
+
+        if (!cards.length) {
+
+            showToast("No songs available.");
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           NOTHING PLAYING → FIRST SONG
+           ------------------------------------------------- */
+
+        if (!currentData) {
+
+            const firstButton =
+                cards[0].querySelector(".poster-play");
+
+
+            if (firstButton) {
+
+                playCard(firstButton);
+
+            } else {
+
+                playSong({
+
+                    card: cards[0],
+
+                    song: cards[0].dataset.song,
+
+                    artist: cards[0].dataset.artist,
+
+                    file: cards[0].dataset.file,
+
+                    image: cards[0].dataset.image
+
+                });
+
+            }
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           FIND CURRENT SONG
+           ------------------------------------------------- */
+
+        let currentIndex =
+            cards.findIndex(card =>
+                card.dataset.song ===
+                currentData.song
+            );
+
+
+        /* -------------------------------------------------
+           FALLBACK IF CURRENT SONG NOT FOUND
+           ------------------------------------------------- */
+
+        if (currentIndex === -1) {
+            currentIndex = 0;
+        }
+
+
+        /* -------------------------------------------------
+           MOVE TO NEXT SONG
+           ------------------------------------------------- */
+
+        const nextIndex =
+            (currentIndex + 1) % cards.length;
+
+
+        const nextCard =
+            cards[nextIndex];
+
+
+        if (!nextCard) return;
+
+
+        const nextButton =
+            nextCard.querySelector(".poster-play");
+
+
+        if (nextButton) {
+
+            playCard(nextButton);
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           FALLBACK PLAY
+           ------------------------------------------------- */
 
         playSong({
 
-            card: matchingCard,
+            card: nextCard,
 
-            song: queuedSong.song,
+            song: nextCard.dataset.song,
 
-            artist: queuedSong.artist,
+            artist: nextCard.dataset.artist,
 
-            file: matchingCard.dataset.file,
+            file: nextCard.dataset.file,
 
-            image: matchingCard.dataset.image
+            image: nextCard.dataset.image
 
         });
-
-
-        await loadQueue();
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "Next song error:",
+            error
+        );
 
         showToast(
             "Could not play next song."
         );
 
     }
+
 }
 
 
@@ -789,9 +938,11 @@ function previousSong() {
     const button =
         previous.querySelector(".poster-play");
 
+
     if (button) {
         playCard(button);
     }
+
 }
 
 
@@ -816,9 +967,11 @@ function shuffle() {
     const button =
         cards[random].querySelector(".poster-play");
 
+
     if (button) {
         playCard(button);
     }
+
 }
 
 
@@ -832,6 +985,7 @@ function repeatSong() {
 
     const button =
         document.getElementById("repeatButton");
+
 
     if (!button) return;
 
@@ -849,6 +1003,7 @@ function repeatSong() {
         showToast("Repeat OFF");
 
     }
+
 }
 
 
@@ -861,6 +1016,7 @@ function isFavorite(songName) {
     return favorites.some(
         song => song.song === songName
     );
+
 }
 
 
@@ -870,12 +1026,14 @@ function saveFavorites() {
         "vibequeueFavorites",
         JSON.stringify(favorites)
     );
+
 }
 
 
 function favoriteSong(button) {
 
-    const data = getSongData(button);
+    const data =
+        getSongData(button);
 
     if (!data) return;
 
@@ -889,21 +1047,31 @@ function favoriteSong(button) {
 
     if (existingIndex !== -1) {
 
-        favorites.splice(existingIndex, 1);
+        favorites.splice(
+            existingIndex,
+            1
+        );
 
-        button.classList.remove("liked");
+
+        button.classList.remove(
+            "liked"
+        );
+
 
         button.textContent = "♡";
+
 
         saveFavorites();
 
         renderFavorites();
+
 
         showToast(
             "Removed from favorites"
         );
 
         return;
+
     }
 
 
@@ -924,13 +1092,16 @@ function favoriteSong(button) {
 
     button.textContent = "♥";
 
+
     saveFavorites();
 
     renderFavorites();
 
+
     showToast(
         "Added to favorites ❤️"
     );
+
 }
 
 
@@ -962,6 +1133,7 @@ function renderFavorites() {
         `;
 
         return;
+
     }
 
 
@@ -1057,6 +1229,7 @@ function renderFavorites() {
 
         </div>
     `;
+
 }
 
 
@@ -1066,7 +1239,8 @@ function renderFavorites() {
 
 function playFavorite(index) {
 
-    const song = favorites[index];
+    const song =
+        favorites[index];
 
     if (!song) return;
 
@@ -1088,6 +1262,7 @@ function playFavorite(index) {
         image: song.image
 
     });
+
 }
 
 
@@ -1097,12 +1272,17 @@ function playFavorite(index) {
 
 function removeFavorite(index) {
 
-    const song = favorites[index];
+    const song =
+        favorites[index];
 
     if (!song) return;
 
 
-    favorites.splice(index, 1);
+    favorites.splice(
+        index,
+        1
+    );
+
 
     saveFavorites();
 
@@ -1119,11 +1299,16 @@ function removeFavorite(index) {
             ) {
 
                 const heart =
-                    card.querySelector(".heart");
+                    card.querySelector(
+                        ".heart"
+                    );
+
 
                 if (heart) {
 
-                    heart.classList.remove("liked");
+                    heart.classList.remove(
+                        "liked"
+                    );
 
                     heart.textContent = "♡";
 
@@ -1137,6 +1322,7 @@ function removeFavorite(index) {
     showToast(
         "Removed from favorites"
     );
+
 }
 
 
@@ -1153,18 +1339,24 @@ function restoreFavoriteHearts() {
             const heart =
                 card.querySelector(".heart");
 
+
             if (
                 heart &&
-                isFavorite(card.dataset.song)
+                isFavorite(
+                    card.dataset.song
+                )
             ) {
 
-                heart.classList.add("liked");
+                heart.classList.add(
+                    "liked"
+                );
 
                 heart.textContent = "♥";
 
             }
 
         });
+
 }
 
 
@@ -1179,15 +1371,20 @@ async function clearQueue() {
             "Empty your entire music queue?"
         );
 
+
     if (!yes) return;
 
 
     try {
 
         const response =
-            await fetch("/clear-queue", {
-                method: "POST"
-            });
+            await fetch(
+                "/clear-queue",
+                {
+                    method: "POST"
+                }
+            );
+
 
         const result =
             await response.json();
@@ -1214,6 +1411,7 @@ async function clearQueue() {
         );
 
     }
+
 }
 
 
@@ -1222,7 +1420,9 @@ async function clearQueue() {
    ========================================================= */
 
 const searchInput =
-    document.getElementById("searchInput");
+    document.getElementById(
+        "searchInput"
+    );
 
 
 if (searchInput) {
@@ -1238,7 +1438,9 @@ if (searchInput) {
 
 
             const cards =
-                document.querySelectorAll(".song-card");
+                document.querySelectorAll(
+                    ".song-card"
+                );
 
 
             let count = 0;
@@ -1247,10 +1449,13 @@ if (searchInput) {
             cards.forEach(card => {
 
                 const song =
-                    card.dataset.song.toLowerCase();
+                    card.dataset.song
+                        .toLowerCase();
+
 
                 const artist =
-                    card.dataset.artist.toLowerCase();
+                    card.dataset.artist
+                        .toLowerCase();
 
 
                 if (
@@ -1272,7 +1477,10 @@ if (searchInput) {
 
 
             const songCount =
-                document.getElementById("songCount");
+                document.getElementById(
+                    "songCount"
+                );
+
 
             if (songCount) {
 
@@ -1288,6 +1496,7 @@ if (searchInput) {
 
         }
     );
+
 }
 
 
@@ -1298,16 +1507,24 @@ if (searchInput) {
 function createLibraryModal() {
 
     if (
-        document.getElementById("libraryOverlay")
+        document.getElementById(
+            "libraryOverlay"
+        )
     ) return;
 
 
     const overlay =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    overlay.id = "libraryOverlay";
 
-    overlay.className = "library-overlay";
+    overlay.id =
+        "libraryOverlay";
+
+
+    overlay.className =
+        "library-overlay";
 
 
     overlay.innerHTML = `
@@ -1351,7 +1568,9 @@ function createLibraryModal() {
         "click",
         event => {
 
-            if (event.target === overlay) {
+            if (
+                event.target === overlay
+            ) {
 
                 closeLibrary();
 
@@ -1361,7 +1580,10 @@ function createLibraryModal() {
     );
 
 
-    document.body.appendChild(overlay);
+    document.body.appendChild(
+        overlay
+    );
+
 }
 
 
@@ -1375,13 +1597,21 @@ function openLibrary(type) {
 
 
     const overlay =
-        document.getElementById("libraryOverlay");
+        document.getElementById(
+            "libraryOverlay"
+        );
+
 
     const title =
-        document.getElementById("libraryModalTitle");
+        document.getElementById(
+            "libraryModalTitle"
+        );
+
 
     const subtitle =
-        document.getElementById("libraryModalSubtitle");
+        document.getElementById(
+            "libraryModalSubtitle"
+        );
 
 
     if (!overlay) return;
@@ -1392,7 +1622,9 @@ function openLibrary(type) {
 
     if (type === "playlist") {
 
-        title.textContent = "🎵 My Playlist";
+        title.textContent =
+            "🎵 My Playlist";
+
 
         subtitle.textContent =
             myPlaylist.length +
@@ -1402,29 +1634,37 @@ function openLibrary(type) {
                     : " songs"
             );
 
+
         renderPlaylistModal();
 
         return;
+
     }
 
 
     if (type === "recent") {
 
-        title.textContent = "🕘 Recently Played";
+        title.textContent =
+            "🕘 Recently Played";
+
 
         subtitle.textContent =
             recentlyPlayed.length +
             " recently played";
 
+
         renderRecentlyPlayedModal();
 
         return;
+
     }
 
 
     if (type === "liked") {
 
-        title.textContent = "❤️ Liked Songs";
+        title.textContent =
+            "❤️ Liked Songs";
+
 
         subtitle.textContent =
             favorites.length +
@@ -1434,10 +1674,13 @@ function openLibrary(type) {
                     : " favorites"
             );
 
+
         renderFavoritesModal();
 
         return;
+
     }
+
 }
 
 
@@ -1448,42 +1691,19 @@ function openLibrary(type) {
 function closeLibrary() {
 
     const overlay =
-        document.getElementById("libraryOverlay");
+        document.getElementById(
+            "libraryOverlay"
+        );
+
 
     if (overlay) {
 
-        overlay.classList.remove("show");
+        overlay.classList.remove(
+            "show"
+        );
 
     }
-}
 
-
-/* =========================================================
-   FIND SONG CARD
-   ========================================================= */
-
-function findSongCard(songName) {
-
-    let found = null;
-
-
-    document
-        .querySelectorAll(".song-card")
-        .forEach(card => {
-
-            if (
-                card.dataset.song ===
-                songName
-            ) {
-
-                found = card;
-
-            }
-
-        });
-
-
-    return found;
 }
 
 
@@ -1497,6 +1717,7 @@ function renderRecentlyPlayedModal() {
         document.getElementById(
             "libraryModalBody"
         );
+
 
     if (!body) return;
 
@@ -1522,11 +1743,13 @@ function renderRecentlyPlayedModal() {
         `;
 
         return;
+
     }
 
 
     body.innerHTML =
-        recentlyPlayed.map((song, index) => `
+        recentlyPlayed.map(
+            (song, index) => `
 
             <div class="library-song">
 
@@ -1556,7 +1779,9 @@ function renderRecentlyPlayedModal() {
 
             </div>
 
-        `).join("");
+        `
+        ).join("");
+
 }
 
 
@@ -1566,7 +1791,9 @@ function renderRecentlyPlayedModal() {
 
 function playRecentlyPlayed(index) {
 
-    const song = recentlyPlayed[index];
+    const song =
+        recentlyPlayed[index];
+
 
     if (!song) return;
 
@@ -1576,25 +1803,24 @@ function playRecentlyPlayed(index) {
 
     playSong({
 
-        card: findSongCard(song.song),
+        card:
+            findSongCard(song.song),
 
-        song: song.song,
+        song:
+            song.song,
 
-        artist: song.artist,
+        artist:
+            song.artist,
 
-        file: song.file,
+        file:
+            song.file,
 
-        image: song.image
+        image:
+            song.image
 
     });
+
 }
-
-
-/* =========================================================
-   =========================================================
-   MY PLAYLIST — MAIN FIX
-   =========================================================
-   ========================================================= */
 
 
 /* =========================================================
@@ -1607,6 +1833,7 @@ function savePlaylist() {
         "vibequeuePlaylist",
         JSON.stringify(myPlaylist)
     );
+
 }
 
 
@@ -1634,18 +1861,23 @@ function addToPlaylist(data) {
         );
 
         return;
+
     }
 
 
     myPlaylist.push({
 
-        song: data.song,
+        song:
+            data.song,
 
-        artist: data.artist,
+        artist:
+            data.artist,
 
-        file: data.file,
+        file:
+            data.file,
 
-        image: data.image
+        image:
+            data.image
 
     });
 
@@ -1659,21 +1891,23 @@ function addToPlaylist(data) {
     );
 
 
-    /* Update open playlist immediately */
-
     const overlay =
         document.getElementById(
             "libraryOverlay"
         );
 
+
     if (
         overlay &&
-        overlay.classList.contains("show")
+        overlay.classList.contains(
+            "show"
+        )
     ) {
 
         renderPlaylistModal();
 
     }
+
 }
 
 
@@ -1686,9 +1920,12 @@ function addCardToPlaylist(button) {
     const data =
         getSongData(button);
 
+
     if (!data) return;
 
+
     addToPlaylist(data);
+
 }
 
 
@@ -1702,6 +1939,7 @@ function renderPlaylistModal() {
         document.getElementById(
             "libraryModalBody"
         );
+
 
     if (!body) return;
 
@@ -1727,11 +1965,13 @@ function renderPlaylistModal() {
         `;
 
         return;
+
     }
 
 
     body.innerHTML =
-        myPlaylist.map((song, index) => `
+        myPlaylist.map(
+            (song, index) => `
 
             <div class="library-song">
 
@@ -1782,7 +2022,9 @@ function renderPlaylistModal() {
 
             </div>
 
-        `).join("");
+        `
+        ).join("");
+
 }
 
 
@@ -1795,6 +2037,7 @@ function playPlaylistSong(index) {
     const song =
         myPlaylist[index];
 
+
     if (!song) return;
 
 
@@ -1803,17 +2046,23 @@ function playPlaylistSong(index) {
 
     playSong({
 
-        card: findSongCard(song.song),
+        card:
+            findSongCard(song.song),
 
-        song: song.song,
+        song:
+            song.song,
 
-        artist: song.artist,
+        artist:
+            song.artist,
 
-        file: song.file,
+        file:
+            song.file,
 
-        image: song.image
+        image:
+            song.image
 
     });
+
 }
 
 
@@ -1826,10 +2075,15 @@ function removeFromPlaylist(index) {
     const song =
         myPlaylist[index];
 
+
     if (!song) return;
 
 
-    myPlaylist.splice(index, 1);
+    myPlaylist.splice(
+        index,
+        1
+    );
+
 
     savePlaylist();
 
@@ -1859,6 +2113,7 @@ function removeFromPlaylist(index) {
         song.song +
         " removed from My Playlist"
     );
+
 }
 
 
@@ -1868,7 +2123,9 @@ function removeFromPlaylist(index) {
 
 function createPlaylist() {
 
-    openLibrary("playlist");
+    openLibrary(
+        "playlist"
+    );
 
 }
 
@@ -1898,26 +2155,38 @@ function setupLibraryClicks() {
 
 
                 if (
-                    text.includes("my playlist")
+                    text.includes(
+                        "my playlist"
+                    )
                 ) {
 
-                    openLibrary("playlist");
+                    openLibrary(
+                        "playlist"
+                    );
 
                 }
 
                 else if (
-                    text.includes("recently played")
+                    text.includes(
+                        "recently played"
+                    )
                 ) {
 
-                    openLibrary("recent");
+                    openLibrary(
+                        "recent"
+                    );
 
                 }
 
                 else if (
-                    text.includes("liked songs")
+                    text.includes(
+                        "liked songs"
+                    )
                 ) {
 
-                    openLibrary("liked");
+                    openLibrary(
+                        "liked"
+                    );
 
                 }
 
@@ -1925,6 +2194,7 @@ function setupLibraryClicks() {
         );
 
     });
+
 }
 
 
@@ -1938,6 +2208,7 @@ function renderFavoritesModal() {
         document.getElementById(
             "libraryModalBody"
         );
+
 
     if (!body) return;
 
@@ -1963,11 +2234,13 @@ function renderFavoritesModal() {
         `;
 
         return;
+
     }
 
 
     body.innerHTML =
-        favorites.map((song, index) => `
+        favorites.map(
+            (song, index) => `
 
             <div class="library-song">
 
@@ -1997,7 +2270,9 @@ function renderFavoritesModal() {
 
             </div>
 
-        `).join("");
+        `
+        ).join("");
+
 }
 
 
@@ -2006,6 +2281,7 @@ function playFavoriteFromLibrary(index) {
     closeLibrary();
 
     playFavorite(index);
+
 }
 
 
@@ -2018,6 +2294,8 @@ function createPlaylistButtons() {
     document
         .querySelectorAll(".song-card")
         .forEach(card => {
+
+            /* Prevent duplicate Playlist buttons */
 
             if (
                 card.querySelector(
@@ -2033,14 +2311,19 @@ function createPlaylistButtons() {
                     ".card-buttons"
                 );
 
+
             if (!buttons) return;
 
 
             const button =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
 
 
-            button.type = "button";
+            button.type =
+                "button";
+
 
             button.className =
                 "playlist-add-button";
@@ -2059,6 +2342,7 @@ function createPlaylistButtons() {
                 event => {
 
                     event.stopPropagation();
+
 
                     addToPlaylist({
 
@@ -2080,18 +2364,18 @@ function createPlaylistButtons() {
             );
 
 
-            /*
-             * Make it occupy the full width
-             * without changing your CSS.
-             */
+            /* Full-width Playlist button */
 
             button.style.gridColumn =
                 "1 / -1";
 
 
-            buttons.appendChild(button);
+            buttons.appendChild(
+                button
+            );
 
         });
+
 }
 
 
@@ -2104,19 +2388,20 @@ document.addEventListener(
     event => {
 
         const card =
-            event.target.closest(".song-card");
+            event.target.closest(
+                ".song-card"
+            );
+
 
         if (!card) return;
 
 
-        /*
-         * Ignore double-clicks on buttons.
-         * The Playlist button is now the
-         * primary way to add songs.
-         */
+        /* Don't trigger when clicking buttons */
 
         if (
-            event.target.closest("button")
+            event.target.closest(
+                "button"
+            )
         ) {
             return;
         }
@@ -2150,15 +2435,31 @@ function escapeHtml(value) {
 
     return String(value)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-        .replace(/'/g, "&#039;");
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
 }
 
 
