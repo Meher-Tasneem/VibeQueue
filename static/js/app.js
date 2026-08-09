@@ -1,5 +1,5 @@
 /* =========================================================
-   VIBEQUEUE — FULL REPLACEMENT JAVASCRIPT
+   VIBEQUEUE — COMPLETE PLAYLIST + PLAYER JAVASCRIPT
    ========================================================= */
 
 const audio = document.getElementById("audio");
@@ -51,6 +51,7 @@ function showToast(message) {
     if (!toast) return;
 
     toast.textContent = message;
+
     toast.classList.add("show");
 
     clearTimeout(window.toastTimer);
@@ -82,19 +83,6 @@ function getSongData(button) {
 
 
 /* =========================================================
-   IMAGE PATH
-   ========================================================= */
-
-function getImagePath(image) {
-
-    if (!image) return "";
-
-    return "/static/images/" +
-        encodeURIComponent(image);
-}
-
-
-/* =========================================================
    RECENTLY PLAYED
    ========================================================= */
 
@@ -102,10 +90,9 @@ function saveRecentlyPlayed(data) {
 
     if (!data) return;
 
-    recentlyPlayed =
-        recentlyPlayed.filter(
-            song => song.song !== data.song
-        );
+    recentlyPlayed = recentlyPlayed.filter(
+        song => song.song !== data.song
+    );
 
     recentlyPlayed.unshift({
         song: data.song,
@@ -114,84 +101,12 @@ function saveRecentlyPlayed(data) {
         image: data.image
     });
 
-    recentlyPlayed =
-        recentlyPlayed.slice(0, 8);
+    recentlyPlayed = recentlyPlayed.slice(0, 8);
 
     localStorage.setItem(
         "vibequeueRecentlyPlayed",
         JSON.stringify(recentlyPlayed)
     );
-}
-
-
-/* =========================================================
-   PLAYER POSTER — FIXED
-   ========================================================= */
-
-function setPlayerPoster(image) {
-
-    if (!playerPoster) return;
-
-    const imagePath = getImagePath(image);
-
-    if (!imagePath) {
-
-        playerPoster.style.display = "none";
-
-        if (miniPlaceholder) {
-            miniPlaceholder.style.display = "grid";
-        }
-
-        return;
-    }
-
-
-    /* Hide placeholder first */
-
-    if (miniPlaceholder) {
-        miniPlaceholder.style.display = "none";
-    }
-
-
-    /* Force image to display */
-
-    playerPoster.style.display = "block";
-    playerPoster.style.visibility = "visible";
-    playerPoster.style.opacity = "1";
-
-
-    /* Set image */
-
-    playerPoster.src = imagePath;
-
-
-    /* If image fails, show placeholder */
-
-    playerPoster.onerror = function () {
-
-        console.error(
-            "Player poster not found:",
-            imagePath
-        );
-
-        this.style.display = "none";
-
-        if (miniPlaceholder) {
-            miniPlaceholder.style.display = "grid";
-        }
-    };
-
-
-    playerPoster.onload = function () {
-
-        this.style.display = "block";
-        this.style.visibility = "visible";
-        this.style.opacity = "1";
-
-        if (miniPlaceholder) {
-            miniPlaceholder.style.display = "none";
-        }
-    };
 }
 
 
@@ -205,27 +120,43 @@ function playSong(data) {
 
     currentData = data;
 
-
-    /* Song information */
-
-    currentSong.textContent =
-        data.song;
-
-    currentArtist.textContent =
-        data.artist;
-
-
-    /* Recently played */
+    currentSong.textContent = data.song;
+    currentArtist.textContent = data.artist;
 
     saveRecentlyPlayed(data);
 
 
-    /* FIX: SHOW POSTER IN BOTTOM PLAYER */
+    /* =====================================================
+       PLAYER POSTER
+       ===================================================== */
 
-    setPlayerPoster(data.image);
+    if (playerPoster) {
+
+        playerPoster.src =
+            "/static/images/" +
+            encodeURIComponent(data.image);
+
+        playerPoster.style.display = "block";
+
+        playerPoster.onerror = function () {
+
+            this.style.display = "none";
+
+            if (miniPlaceholder) {
+                miniPlaceholder.style.display = "grid";
+            }
+
+        };
+
+        if (miniPlaceholder) {
+            miniPlaceholder.style.display = "none";
+        }
+    }
 
 
-    /* Audio */
+    /* =====================================================
+       AUDIO
+       ===================================================== */
 
     audio.src =
         "/static/music/" +
@@ -234,58 +165,47 @@ function playSong(data) {
     audio.load();
 
 
-    /* Remove old playing state */
+    /* =====================================================
+       REMOVE OLD PLAYING STATE
+       ===================================================== */
 
     document
         .querySelectorAll(".song-card")
         .forEach(card => {
 
-            card.classList.remove(
-                "now-playing"
-            );
+            card.classList.remove("now-playing");
 
         });
 
 
-    /* Highlight current song */
-
     if (data.card) {
 
-        data.card.classList.add(
-            "now-playing"
-        );
+        data.card.classList.add("now-playing");
 
     }
 
-
-    /* Play */
 
     audio.play()
 
         .then(() => {
 
             if (player) {
-                player.classList.add(
-                    "playing"
-                );
+                player.classList.add("playing");
             }
 
-            mainPlay.textContent =
-                "❚❚";
+            if (mainPlay) {
+                mainPlay.textContent = "❚❚";
+            }
 
             showToast(
-                data.song +
-                " is playing 🎧"
+                data.song + " is playing 🎧"
             );
 
         })
 
         .catch(error => {
 
-            console.error(
-                "Audio error:",
-                error
-            );
+            console.error(error);
 
             showToast(
                 "Couldn't play this song."
@@ -301,8 +221,7 @@ function playSong(data) {
 
 function playCard(button) {
 
-    const data =
-        getSongData(button);
+    const data = getSongData(button);
 
     if (data) {
         playSong(data);
@@ -318,15 +237,11 @@ async function startListening() {
 
     try {
 
-        const response =
-            await fetch("/queue");
+        const response = await fetch("/queue");
 
-        const result =
-            await response.json();
+        const result = await response.json();
 
-        const queue =
-            result.queue || [];
-
+        const queue = result.queue || [];
 
         if (queue.length > 0) {
 
@@ -337,18 +252,18 @@ async function startListening() {
 
 
         const firstCard =
-            document.querySelector(
-                ".song-card"
-            );
+            document.querySelector(".song-card");
 
         if (!firstCard) return;
 
 
-        playCard(
-            firstCard.querySelector(
-                ".card-buttons button"
-            )
-        );
+        const playButton =
+            firstCard.querySelector(".poster-play") ||
+            firstCard.querySelector(".card-buttons button");
+
+        if (playButton) {
+            playCard(playButton);
+        }
 
     }
 
@@ -357,17 +272,17 @@ async function startListening() {
         console.error(error);
 
         const firstCard =
-            document.querySelector(
-                ".song-card"
-            );
+            document.querySelector(".song-card");
 
         if (!firstCard) return;
 
-        playCard(
-            firstCard.querySelector(
-                ".card-buttons button"
-            )
-        );
+        const playButton =
+            firstCard.querySelector(".poster-play") ||
+            firstCard.querySelector(".card-buttons button");
+
+        if (playButton) {
+            playCard(playButton);
+        }
     }
 }
 
@@ -402,95 +317,79 @@ function togglePlay() {
    AUDIO EVENTS
    ========================================================= */
 
-audio.addEventListener(
-    "play",
-    () => {
+audio.addEventListener("play", () => {
 
-        if (player) {
-            player.classList.add(
-                "playing"
-            );
-        }
-
-        mainPlay.textContent =
-            "❚❚";
-
+    if (player) {
+        player.classList.add("playing");
     }
-);
 
-
-audio.addEventListener(
-    "pause",
-    () => {
-
-        if (player) {
-            player.classList.remove(
-                "playing"
-            );
-        }
-
-        mainPlay.textContent =
-            "▶";
-
+    if (mainPlay) {
+        mainPlay.textContent = "❚❚";
     }
-);
+
+});
 
 
-audio.addEventListener(
-    "loadedmetadata",
-    () => {
+audio.addEventListener("pause", () => {
+
+    if (player) {
+        player.classList.remove("playing");
+    }
+
+    if (mainPlay) {
+        mainPlay.textContent = "▶";
+    }
+
+});
+
+
+audio.addEventListener("loadedmetadata", () => {
+
+    if (duration) {
 
         duration.textContent =
-            formatTime(
-                audio.duration
-            );
+            formatTime(audio.duration);
 
     }
-);
+
+});
 
 
-audio.addEventListener(
-    "timeupdate",
-    () => {
+audio.addEventListener("timeupdate", () => {
 
-        if (!audio.duration) return;
+    if (!audio.duration) return;
+
+    if (progressBar) {
 
         progressBar.value =
-            (
-                audio.currentTime /
-                audio.duration
-            ) * 100;
+            (audio.currentTime / audio.duration) * 100;
+
+    }
+
+    if (currentTime) {
 
         currentTime.textContent =
-            formatTime(
-                audio.currentTime
-            );
+            formatTime(audio.currentTime);
 
     }
-);
+
+});
 
 
-/* =========================================================
-   SONG ENDED
-   ========================================================= */
+audio.addEventListener("ended", async () => {
 
-audio.addEventListener(
-    "ended",
-    async () => {
+    if (repeat) {
 
-        if (repeat) {
+        audio.currentTime = 0;
 
-            audio.currentTime = 0;
+        audio.play();
 
-            audio.play();
-
-            return;
-        }
-
-        await nextSong(true);
-
+        return;
     }
-);
+
+    await nextSong(true);
+
+});
 
 
 /* =========================================================
@@ -499,29 +398,19 @@ audio.addEventListener(
 
 function formatTime(seconds) {
 
-    if (
-        !Number.isFinite(seconds)
-    ) {
+    if (!Number.isFinite(seconds)) {
         return "0:00";
     }
 
     const minutes =
-        Math.floor(
-            seconds / 60
-        );
+        Math.floor(seconds / 60);
 
     const secondsPart =
-        Math.floor(
-            seconds % 60
-        )
-        .toString()
-        .padStart(2, "0");
+        Math.floor(seconds % 60)
+            .toString()
+            .padStart(2, "0");
 
-    return (
-        minutes +
-        ":" +
-        secondsPart
-    );
+    return minutes + ":" + secondsPart;
 }
 
 
@@ -529,38 +418,36 @@ function formatTime(seconds) {
    PROGRESS
    ========================================================= */
 
-progressBar.addEventListener(
-    "input",
-    () => {
+if (progressBar) {
+
+    progressBar.addEventListener("input", () => {
 
         if (!audio.duration) return;
 
         audio.currentTime =
-            (
-                progressBar.value /
-                100
-            ) *
+            (progressBar.value / 100) *
             audio.duration;
 
-    }
-);
+    });
+
+}
 
 
 /* =========================================================
    VOLUME
    ========================================================= */
 
-volume.addEventListener(
-    "input",
-    () => {
+if (volume) {
 
-        audio.volume =
-            volume.value;
+    volume.addEventListener("input", () => {
+
+        audio.volume = volume.value;
 
         updateVolumeIcon();
 
-    }
-);
+    });
+
+}
 
 audio.volume = 0.8;
 
@@ -568,9 +455,7 @@ audio.volume = 0.8;
 function updateVolumeIcon() {
 
     const icon =
-        document.getElementById(
-            "volumeIcon"
-        );
+        document.getElementById("volumeIcon");
 
     if (!icon) return;
 
@@ -596,8 +481,7 @@ function updateVolumeIcon() {
 
 async function queueCard(button) {
 
-    const data =
-        getSongData(button);
+    const data = getSongData(button);
 
     if (!data) return;
 
@@ -605,23 +489,20 @@ async function queueCard(button) {
     try {
 
         const response =
-            await fetch(
-                "/add-to-queue",
-                {
-                    method: "POST",
+            await fetch("/add-to-queue", {
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                method: "POST",
 
-                    body:
-                        JSON.stringify({
-                            song: data.song,
-                            artist: data.artist
-                        })
-                }
-            );
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    song: data.song,
+                    artist: data.artist
+                })
+
+            });
 
 
         const result =
@@ -678,13 +559,20 @@ async function loadQueue() {
             result.queue || [];
 
 
-        queueStatus.textContent =
-            queue.length +
-            (
-                queue.length === 1
-                    ? " song waiting"
-                    : " songs waiting"
-            );
+        if (queueStatus) {
+
+            queueStatus.textContent =
+                queue.length +
+                (
+                    queue.length === 1
+                        ? " song waiting"
+                        : " songs waiting"
+                );
+
+        }
+
+
+        if (!queueBox) return;
 
 
         if (queue.length === 0) {
@@ -714,29 +602,22 @@ async function loadQueue() {
 
 
         queueBox.innerHTML =
-            queue.map(
-                (song, index) => `
+            queue.map((song, index) => `
 
                 <div class="queue-song">
 
                     <div class="queue-number">
-                        ${String(
-                            index + 1
-                        ).padStart(2, "0")}
+                        ${String(index + 1).padStart(2, "0")}
                     </div>
 
                     <div>
 
                         <b>
-                            ${escapeHtml(
-                                song.song
-                            )}
+                            ${escapeHtml(song.song)}
                         </b>
 
                         <small>
-                            ${escapeHtml(
-                                song.artist
-                            )}
+                            ${escapeHtml(song.artist)}
                         </small>
 
                     </div>
@@ -752,17 +633,13 @@ async function loadQueue() {
 
                 </div>
 
-            `
-            ).join("");
+            `).join("");
 
     }
 
     catch (error) {
 
-        console.error(
-            "Queue error:",
-            error
-        );
+        console.error("Queue error:", error);
 
     }
 }
@@ -777,12 +654,9 @@ async function nextSong(auto = false) {
     try {
 
         const response =
-            await fetch(
-                "/play-next",
-                {
-                    method: "POST"
-                }
-            );
+            await fetch("/play-next", {
+                method: "POST"
+            });
 
         const result =
             await response.json();
@@ -809,9 +683,7 @@ async function nextSong(auto = false) {
 
 
         const cards =
-            document.querySelectorAll(
-                ".song-card"
-            );
+            document.querySelectorAll(".song-card");
 
 
         let matchingCard = null;
@@ -881,22 +753,19 @@ async function nextSong(auto = false) {
 function previousSong() {
 
     const cards =
-        [
-            ...document.querySelectorAll(
-                ".song-card"
-            )
-        ];
+        [...document.querySelectorAll(".song-card")];
 
     if (!cards.length) return;
 
 
     if (!currentData) {
 
-        playCard(
-            cards[0].querySelector(
-                ".card-buttons button"
-            )
-        );
+        const button =
+            cards[0].querySelector(".poster-play");
+
+        if (button) {
+            playCard(button);
+        }
 
         return;
     }
@@ -912,20 +781,17 @@ function previousSong() {
 
     const previous =
         cards[
-            (
-                index -
-                1 +
-                cards.length
-            ) %
+            (index - 1 + cards.length) %
             cards.length
         ];
 
 
-    playCard(
-        previous.querySelector(
-            ".card-buttons button"
-        )
-    );
+    const button =
+        previous.querySelector(".poster-play");
+
+    if (button) {
+        playCard(button);
+    }
 }
 
 
@@ -936,27 +802,23 @@ function previousSong() {
 function shuffle() {
 
     const cards =
-        [
-            ...document.querySelectorAll(
-                ".song-card"
-            )
-        ];
+        [...document.querySelectorAll(".song-card")];
 
     if (!cards.length) return;
 
 
     const random =
         Math.floor(
-            Math.random() *
-            cards.length
+            Math.random() * cards.length
         );
 
 
-    playCard(
-        cards[random].querySelector(
-            ".card-buttons button"
-        )
-    );
+    const button =
+        cards[random].querySelector(".poster-play");
+
+    if (button) {
+        playCard(button);
+    }
 }
 
 
@@ -969,28 +831,22 @@ function repeatSong() {
     repeat = !repeat;
 
     const button =
-        document.getElementById(
-            "repeatButton"
-        );
+        document.getElementById("repeatButton");
+
+    if (!button) return;
 
 
     if (repeat) {
 
-        button.style.color =
-            "#a18aff";
+        button.style.color = "#a18aff";
 
-        showToast(
-            "Repeat ON 🔁"
-        );
+        showToast("Repeat ON 🔁");
 
     } else {
 
-        button.style.color =
-            "";
+        button.style.color = "";
 
-        showToast(
-            "Repeat OFF"
-        );
+        showToast("Repeat OFF");
 
     }
 }
@@ -1003,8 +859,7 @@ function repeatSong() {
 function isFavorite(songName) {
 
     return favorites.some(
-        song =>
-            song.song === songName
+        song => song.song === songName
     );
 }
 
@@ -1020,8 +875,7 @@ function saveFavorites() {
 
 function favoriteSong(button) {
 
-    const data =
-        getSongData(button);
+    const data = getSongData(button);
 
     if (!data) return;
 
@@ -1029,24 +883,17 @@ function favoriteSong(button) {
     const existingIndex =
         favorites.findIndex(
             song =>
-                song.song ===
-                data.song
+                song.song === data.song
         );
 
 
     if (existingIndex !== -1) {
 
-        favorites.splice(
-            existingIndex,
-            1
-        );
+        favorites.splice(existingIndex, 1);
 
-        button.classList.remove(
-            "liked"
-        );
+        button.classList.remove("liked");
 
-        button.textContent =
-            "♡";
+        button.textContent = "♡";
 
         saveFavorites();
 
@@ -1063,33 +910,19 @@ function favoriteSong(button) {
     favorites.push({
 
         song: data.song,
+
         artist: data.artist,
+
         image: data.image,
+
         file: data.file
 
     });
 
 
-    button.classList.add(
-        "liked"
-    );
+    button.classList.add("liked");
 
-    button.textContent =
-        "♥";
-
-
-    button.classList.add(
-        "heart-pop"
-    );
-
-    setTimeout(() => {
-
-        button.classList.remove(
-            "heart-pop"
-        );
-
-    }, 450);
-
+    button.textContent = "♥";
 
     saveFavorites();
 
@@ -1134,32 +967,27 @@ function renderFavorites() {
 
     favoritesBox.innerHTML = `
 
-        <div
-            style="
-                width:100%;
-                padding:10px 15px;
-            "
-        >
+        <div style="
+            width:100%;
+            padding:10px 15px;
+        ">
 
-            ${favorites.map(
-                (song, index) => `
+            ${favorites.map((song, index) => `
 
-                <div
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:12px;
-                        padding:10px;
-                        margin-bottom:8px;
-                        border-radius:12px;
-                        background:#15161f;
-                        border:1px solid #252a36;
-                        text-align:left;
-                    "
-                >
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
+                    padding:10px;
+                    margin-bottom:8px;
+                    border-radius:12px;
+                    background:#15161f;
+                    border:1px solid #252a36;
+                    text-align:left;
+                ">
 
                     <img
-                        src="${getImagePath(song.image)}"
+                        src="/static/images/${encodeURIComponent(song.image)}"
                         alt="${escapeHtml(song.song)}"
                         style="
                             width:50px;
@@ -1170,30 +998,24 @@ function renderFavorites() {
                         "
                     >
 
-                    <div
-                        style="
-                            flex:1;
-                            min-width:0;
-                        "
-                    >
+                    <div style="
+                        flex:1;
+                        min-width:0;
+                    ">
 
-                        <b
-                            style="
-                                display:block;
-                                color:#fff;
-                                font-size:13px;
-                            "
-                        >
+                        <b style="
+                            display:block;
+                            color:#fff;
+                            font-size:13px;
+                        ">
                             ${escapeHtml(song.song)}
                         </b>
 
-                        <small
-                            style="
-                                display:block;
-                                color:#777e8e;
-                                margin-top:4px;
-                            "
-                        >
+                        <small style="
+                            display:block;
+                            color:#777e8e;
+                            margin-top:4px;
+                        ">
                             ${escapeHtml(song.artist)}
                         </small>
 
@@ -1231,8 +1053,7 @@ function renderFavorites() {
 
                 </div>
 
-            `
-            ).join("")}
+            `).join("")}
 
         </div>
     `;
@@ -1245,38 +1066,18 @@ function renderFavorites() {
 
 function playFavorite(index) {
 
-    const song =
-        favorites[index];
+    const song = favorites[index];
 
     if (!song) return;
 
 
-    const cards =
-        document.querySelectorAll(
-            ".song-card"
-        );
-
-
-    let matchingCard = null;
-
-
-    cards.forEach(card => {
-
-        if (
-            card.dataset.song ===
-            song.song
-        ) {
-
-            matchingCard = card;
-
-        }
-
-    });
+    const card =
+        findSongCard(song.song);
 
 
     playSong({
 
-        card: matchingCard,
+        card: card,
 
         song: song.song,
 
@@ -1296,8 +1097,7 @@ function playFavorite(index) {
 
 function removeFavorite(index) {
 
-    const song =
-        favorites[index];
+    const song = favorites[index];
 
     if (!song) return;
 
@@ -1310,9 +1110,7 @@ function removeFavorite(index) {
 
 
     document
-        .querySelectorAll(
-            ".song-card"
-        )
+        .querySelectorAll(".song-card")
         .forEach(card => {
 
             if (
@@ -1321,18 +1119,13 @@ function removeFavorite(index) {
             ) {
 
                 const heart =
-                    card.querySelector(
-                        ".heart"
-                    );
+                    card.querySelector(".heart");
 
                 if (heart) {
 
-                    heart.classList.remove(
-                        "liked"
-                    );
+                    heart.classList.remove("liked");
 
-                    heart.textContent =
-                        "♡";
+                    heart.textContent = "♡";
 
                 }
 
@@ -1354,30 +1147,20 @@ function removeFavorite(index) {
 function restoreFavoriteHearts() {
 
     document
-        .querySelectorAll(
-            ".song-card"
-        )
+        .querySelectorAll(".song-card")
         .forEach(card => {
 
             const heart =
-                card.querySelector(
-                    ".heart"
-                );
-
+                card.querySelector(".heart");
 
             if (
                 heart &&
-                isFavorite(
-                    card.dataset.song
-                )
+                isFavorite(card.dataset.song)
             ) {
 
-                heart.classList.add(
-                    "liked"
-                );
+                heart.classList.add("liked");
 
-                heart.textContent =
-                    "♥";
+                heart.textContent = "♥";
 
             }
 
@@ -1396,20 +1179,15 @@ async function clearQueue() {
             "Empty your entire music queue?"
         );
 
-
     if (!yes) return;
 
 
     try {
 
         const response =
-            await fetch(
-                "/clear-queue",
-                {
-                    method: "POST"
-                }
-            );
-
+            await fetch("/clear-queue", {
+                method: "POST"
+            });
 
         const result =
             await response.json();
@@ -1444,9 +1222,7 @@ async function clearQueue() {
    ========================================================= */
 
 const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+    document.getElementById("searchInput");
 
 
 if (searchInput) {
@@ -1462,9 +1238,7 @@ if (searchInput) {
 
 
             const cards =
-                document.querySelectorAll(
-                    ".song-card"
-                );
+                document.querySelectorAll(".song-card");
 
 
             let count = 0;
@@ -1473,12 +1247,10 @@ if (searchInput) {
             cards.forEach(card => {
 
                 const song =
-                    card.dataset.song
-                        .toLowerCase();
+                    card.dataset.song.toLowerCase();
 
                 const artist =
-                    card.dataset.artist
-                        .toLowerCase();
+                    card.dataset.artist.toLowerCase();
 
 
                 if (
@@ -1486,32 +1258,33 @@ if (searchInput) {
                     artist.includes(text)
                 ) {
 
-                    card.style.display =
-                        "";
+                    card.style.display = "";
 
                     count++;
 
                 } else {
 
-                    card.style.display =
-                        "none";
+                    card.style.display = "none";
 
                 }
 
             });
 
 
-            document
-                .getElementById(
-                    "songCount"
-                )
-                .textContent =
-                count +
-                (
-                    count === 1
-                        ? " song"
-                        : " songs"
-                );
+            const songCount =
+                document.getElementById("songCount");
+
+            if (songCount) {
+
+                songCount.textContent =
+                    count +
+                    (
+                        count === 1
+                            ? " song"
+                            : " songs"
+                    );
+
+            }
 
         }
     );
@@ -1525,33 +1298,16 @@ if (searchInput) {
 function createLibraryModal() {
 
     if (
-        document.getElementById(
-            "libraryOverlay"
-        )
+        document.getElementById("libraryOverlay")
     ) return;
 
 
     const overlay =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
-    overlay.id =
-        "libraryOverlay";
+    overlay.id = "libraryOverlay";
 
-    overlay.className =
-        "library-overlay";
-
-
-    /*
-       IMPORTANT:
-       These inline values make the modal work
-       even if mobile CSS has a z-index/display issue.
-    */
-
-    overlay.style.position = "fixed";
-    overlay.style.inset = "0";
-    overlay.style.zIndex = "99999";
+    overlay.className = "library-overlay";
 
 
     overlay.innerHTML = `
@@ -1573,7 +1329,6 @@ function createLibraryModal() {
                 </div>
 
                 <button
-                    type="button"
                     class="library-close"
                     onclick="closeLibrary()"
                 >
@@ -1596,10 +1351,7 @@ function createLibraryModal() {
         "click",
         event => {
 
-            if (
-                event.target ===
-                overlay
-            ) {
+            if (event.target === overlay) {
 
                 closeLibrary();
 
@@ -1609,9 +1361,7 @@ function createLibraryModal() {
     );
 
 
-    document.body.appendChild(
-        overlay
-    );
+    document.body.appendChild(overlay);
 }
 
 
@@ -1625,51 +1375,24 @@ function openLibrary(type) {
 
 
     const overlay =
-        document.getElementById(
-            "libraryOverlay"
-        );
+        document.getElementById("libraryOverlay");
 
     const title =
-        document.getElementById(
-            "libraryModalTitle"
-        );
+        document.getElementById("libraryModalTitle");
 
     const subtitle =
-        document.getElementById(
-            "libraryModalSubtitle"
-        );
+        document.getElementById("libraryModalSubtitle");
 
 
     if (!overlay) return;
 
 
-    overlay.classList.add(
-        "show"
-    );
-
-
-    /*
-       NO TYPE = LIBRARY HOME
-    */
-
-    if (!type) {
-
-        title.textContent =
-            "Your Library";
-
-        subtitle.textContent =
-            "Your music collection";
-
-        renderLibraryHome();
-
-        return;
-    }
+    overlay.classList.add("show");
 
 
     if (type === "playlist") {
 
-        title.textContent =
-            "🎵 My Playlist";
+        title.textContent = "🎵 My Playlist";
 
         subtitle.textContent =
             myPlaylist.length +
@@ -1687,8 +1410,7 @@ function openLibrary(type) {
 
     if (type === "recent") {
 
-        title.textContent =
-            "🕘 Recently Played";
+        title.textContent = "🕘 Recently Played";
 
         subtitle.textContent =
             recentlyPlayed.length +
@@ -1702,8 +1424,7 @@ function openLibrary(type) {
 
     if (type === "liked") {
 
-        title.textContent =
-            "❤️ Liked Songs";
+        title.textContent = "❤️ Liked Songs";
 
         subtitle.textContent =
             favorites.length +
@@ -1721,128 +1442,48 @@ function openLibrary(type) {
 
 
 /* =========================================================
-   LIBRARY HOME — SPOTIFY STYLE
-   ========================================================= */
-
-function renderLibraryHome() {
-
-    const body =
-        document.getElementById(
-            "libraryModalBody"
-        );
-
-    if (!body) return;
-
-
-    body.innerHTML = `
-
-        <div class="library-home">
-
-            <button
-                type="button"
-                class="library-choice"
-                onclick="openLibrary('playlist')"
-            >
-
-                <div class="library-choice-icon">
-                    🎵
-                </div>
-
-                <div>
-                    <b>My Playlist</b>
-
-                    <small>
-                        ${myPlaylist.length}
-                        ${
-                            myPlaylist.length === 1
-                                ? " song"
-                                : " songs"
-                        }
-                    </small>
-                </div>
-
-                <span>›</span>
-
-            </button>
-
-
-            <button
-                type="button"
-                class="library-choice"
-                onclick="openLibrary('recent')"
-            >
-
-                <div class="library-choice-icon">
-                    🕘
-                </div>
-
-                <div>
-                    <b>Recently Played</b>
-
-                    <small>
-                        ${
-                            recentlyPlayed.length
-                        }
-                        recently played
-                    </small>
-                </div>
-
-                <span>›</span>
-
-            </button>
-
-
-            <button
-                type="button"
-                class="library-choice"
-                onclick="openLibrary('liked')"
-            >
-
-                <div class="library-choice-icon">
-                    ❤️
-                </div>
-
-                <div>
-                    <b>Liked Songs</b>
-
-                    <small>
-                        ${favorites.length}
-                        ${
-                            favorites.length === 1
-                                ? " favorite"
-                                : " favorites"
-                        }
-                    </small>
-                </div>
-
-                <span>›</span>
-
-            </button>
-
-        </div>
-
-    `;
-}
-
-
-/* =========================================================
    CLOSE LIBRARY
    ========================================================= */
 
 function closeLibrary() {
 
     const overlay =
-        document.getElementById(
-            "libraryOverlay"
-        );
+        document.getElementById("libraryOverlay");
 
     if (overlay) {
 
-        overlay.classList.remove(
-            "show"
-        );
+        overlay.classList.remove("show");
 
     }
+}
+
+
+/* =========================================================
+   FIND SONG CARD
+   ========================================================= */
+
+function findSongCard(songName) {
+
+    let found = null;
+
+
+    document
+        .querySelectorAll(".song-card")
+        .forEach(card => {
+
+            if (
+                card.dataset.song ===
+                songName
+            ) {
+
+                found = card;
+
+            }
+
+        });
+
+
+    return found;
 }
 
 
@@ -1885,13 +1526,12 @@ function renderRecentlyPlayedModal() {
 
 
     body.innerHTML =
-        recentlyPlayed.map(
-            (song, index) => `
+        recentlyPlayed.map((song, index) => `
 
             <div class="library-song">
 
                 <img
-                    src="${getImagePath(song.image)}"
+                    src="/static/images/${encodeURIComponent(song.image)}"
                     alt="${escapeHtml(song.song)}"
                 >
 
@@ -1908,7 +1548,6 @@ function renderRecentlyPlayedModal() {
                 </div>
 
                 <button
-                    type="button"
                     class="library-play"
                     onclick="playRecentlyPlayed(${index})"
                 >
@@ -1917,8 +1556,7 @@ function renderRecentlyPlayedModal() {
 
             </div>
 
-        `
-        ).join("");
+        `).join("");
 }
 
 
@@ -1928,8 +1566,7 @@ function renderRecentlyPlayedModal() {
 
 function playRecentlyPlayed(index) {
 
-    const song =
-        recentlyPlayed[index];
+    const song = recentlyPlayed[index];
 
     if (!song) return;
 
@@ -1937,32 +1574,9 @@ function playRecentlyPlayed(index) {
     closeLibrary();
 
 
-    const cards =
-        document.querySelectorAll(
-            ".song-card"
-        );
-
-
-    let card = null;
-
-
-    cards.forEach(item => {
-
-        if (
-            item.dataset.song ===
-            song.song
-        ) {
-
-            card = item;
-
-        }
-
-    });
-
-
     playSong({
 
-        card: card,
+        card: findSongCard(song.song),
 
         song: song.song,
 
@@ -1977,7 +1591,14 @@ function playRecentlyPlayed(index) {
 
 
 /* =========================================================
-   MY PLAYLIST
+   =========================================================
+   MY PLAYLIST — MAIN FIX
+   =========================================================
+   ========================================================= */
+
+
+/* =========================================================
+   SAVE PLAYLIST
    ========================================================= */
 
 function savePlaylist() {
@@ -1989,23 +1610,27 @@ function savePlaylist() {
 }
 
 
+/* =========================================================
+   ADD SONG TO PLAYLIST
+   ========================================================= */
+
 function addToPlaylist(data) {
 
     if (!data) return;
 
 
-    const exists =
+    const alreadyExists =
         myPlaylist.some(
             song =>
-                song.song ===
-                data.song
+                song.song === data.song
         );
 
 
-    if (exists) {
+    if (alreadyExists) {
 
         showToast(
-            "Already in My Playlist 🎵"
+            data.song +
+            " is already in My Playlist 🎵"
         );
 
         return;
@@ -2027,12 +1652,49 @@ function addToPlaylist(data) {
 
     savePlaylist();
 
+
     showToast(
         data.song +
         " added to My Playlist 🎵"
     );
+
+
+    /* Update open playlist immediately */
+
+    const overlay =
+        document.getElementById(
+            "libraryOverlay"
+        );
+
+    if (
+        overlay &&
+        overlay.classList.contains("show")
+    ) {
+
+        renderPlaylistModal();
+
+    }
 }
 
+
+/* =========================================================
+   ADD SONG USING CARD
+   ========================================================= */
+
+function addCardToPlaylist(button) {
+
+    const data =
+        getSongData(button);
+
+    if (!data) return;
+
+    addToPlaylist(data);
+}
+
+
+/* =========================================================
+   RENDER PLAYLIST
+   ========================================================= */
 
 function renderPlaylistModal() {
 
@@ -2057,7 +1719,7 @@ function renderPlaylistModal() {
                 </b>
 
                 <p>
-                    Double-click a song to add it here.
+                    Tap ＋ Playlist on any song to add it here.
                 </p>
 
             </div>
@@ -2069,13 +1731,12 @@ function renderPlaylistModal() {
 
 
     body.innerHTML =
-        myPlaylist.map(
-            (song, index) => `
+        myPlaylist.map((song, index) => `
 
             <div class="library-song">
 
                 <img
-                    src="${getImagePath(song.image)}"
+                    src="/static/images/${encodeURIComponent(song.image)}"
                     alt="${escapeHtml(song.song)}"
                 >
 
@@ -2091,20 +1752,43 @@ function renderPlaylistModal() {
 
                 </div>
 
+
                 <button
-                    type="button"
                     class="library-play"
                     onclick="playPlaylistSong(${index})"
+                    title="Play"
                 >
                     ▶
                 </button>
 
+
+                <button
+                    class="playlist-remove"
+                    onclick="removeFromPlaylist(${index})"
+                    title="Remove"
+                    style="
+                        border:0;
+                        width:36px;
+                        height:36px;
+                        border-radius:50%;
+                        background:#ff5c8a;
+                        color:white;
+                        cursor:pointer;
+                        font-size:15px;
+                    "
+                >
+                    🗑
+                </button>
+
             </div>
 
-        `
-        ).join("");
+        `).join("");
 }
 
+
+/* =========================================================
+   PLAY PLAYLIST SONG
+   ========================================================= */
 
 function playPlaylistSong(index) {
 
@@ -2117,32 +1801,9 @@ function playPlaylistSong(index) {
     closeLibrary();
 
 
-    const cards =
-        document.querySelectorAll(
-            ".song-card"
-        );
-
-
-    let card = null;
-
-
-    cards.forEach(item => {
-
-        if (
-            item.dataset.song ===
-            song.song
-        ) {
-
-            card = item;
-
-        }
-
-    });
-
-
     playSong({
 
-        card: card,
+        card: findSongCard(song.song),
 
         song: song.song,
 
@@ -2157,19 +1818,63 @@ function playPlaylistSong(index) {
 
 
 /* =========================================================
-   CREATE PLAYLIST
+   REMOVE FROM PLAYLIST
    ========================================================= */
 
-function createPlaylist() {
+function removeFromPlaylist(index) {
 
-    openLibrary(
-        "playlist"
+    const song =
+        myPlaylist[index];
+
+    if (!song) return;
+
+
+    myPlaylist.splice(index, 1);
+
+    savePlaylist();
+
+    renderPlaylistModal();
+
+
+    const subtitle =
+        document.getElementById(
+            "libraryModalSubtitle"
+        );
+
+
+    if (subtitle) {
+
+        subtitle.textContent =
+            myPlaylist.length +
+            (
+                myPlaylist.length === 1
+                    ? " song"
+                    : " songs"
+            );
+
+    }
+
+
+    showToast(
+        song.song +
+        " removed from My Playlist"
     );
 }
 
 
 /* =========================================================
-   LIBRARY SIDEBAR CLICKS
+   CREATE PLAYLIST
+   ========================================================= */
+
+function createPlaylist() {
+
+    openLibrary("playlist");
+
+}
+
+
+/* =========================================================
+   LIBRARY SIDEBAR
    ========================================================= */
 
 function setupLibraryClicks() {
@@ -2182,49 +1887,37 @@ function setupLibraryClicks() {
 
     items.forEach(item => {
 
-        const text =
-            item.textContent
-                .toLowerCase()
-                .trim();
-
-
         item.addEventListener(
             "click",
             () => {
 
+                const text =
+                    item.textContent
+                        .toLowerCase()
+                        .trim();
+
+
                 if (
-                    text.includes(
-                        "my playlist"
-                    )
+                    text.includes("my playlist")
                 ) {
 
-                    openLibrary(
-                        "playlist"
-                    );
+                    openLibrary("playlist");
 
                 }
 
                 else if (
-                    text.includes(
-                        "recently played"
-                    )
+                    text.includes("recently played")
                 ) {
 
-                    openLibrary(
-                        "recent"
-                    );
+                    openLibrary("recent");
 
                 }
 
                 else if (
-                    text.includes(
-                        "liked songs"
-                    )
+                    text.includes("liked songs")
                 ) {
 
-                    openLibrary(
-                        "liked"
-                    );
+                    openLibrary("liked");
 
                 }
 
@@ -2274,13 +1967,12 @@ function renderFavoritesModal() {
 
 
     body.innerHTML =
-        favorites.map(
-            (song, index) => `
+        favorites.map((song, index) => `
 
             <div class="library-song">
 
                 <img
-                    src="${getImagePath(song.image)}"
+                    src="/static/images/${encodeURIComponent(song.image)}"
                     alt="${escapeHtml(song.song)}"
                 >
 
@@ -2297,7 +1989,6 @@ function renderFavoritesModal() {
                 </div>
 
                 <button
-                    type="button"
                     class="library-play"
                     onclick="playFavoriteFromLibrary(${index})"
                 >
@@ -2306,8 +1997,7 @@ function renderFavoritesModal() {
 
             </div>
 
-        `
-        ).join("");
+        `).join("");
 }
 
 
@@ -2320,7 +2010,93 @@ function playFavoriteFromLibrary(index) {
 
 
 /* =========================================================
-   DOUBLE CLICK → PLAYLIST
+   ADD PLAYLIST BUTTON TO EVERY SONG CARD
+   ========================================================= */
+
+function createPlaylistButtons() {
+
+    document
+        .querySelectorAll(".song-card")
+        .forEach(card => {
+
+            if (
+                card.querySelector(
+                    ".playlist-add-button"
+                )
+            ) {
+                return;
+            }
+
+
+            const buttons =
+                card.querySelector(
+                    ".card-buttons"
+                );
+
+            if (!buttons) return;
+
+
+            const button =
+                document.createElement("button");
+
+
+            button.type = "button";
+
+            button.className =
+                "playlist-add-button";
+
+
+            button.textContent =
+                "＋ Playlist";
+
+
+            button.title =
+                "Add to My Playlist";
+
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    addToPlaylist({
+
+                        song:
+                            card.dataset.song,
+
+                        artist:
+                            card.dataset.artist,
+
+                        file:
+                            card.dataset.file,
+
+                        image:
+                            card.dataset.image
+
+                    });
+
+                }
+            );
+
+
+            /*
+             * Make it occupy the full width
+             * without changing your CSS.
+             */
+
+            button.style.gridColumn =
+                "1 / -1";
+
+
+            buttons.appendChild(button);
+
+        });
+}
+
+
+/* =========================================================
+   DOUBLE CLICK — EXTRA SUPPORT
    ========================================================= */
 
 document.addEventListener(
@@ -2328,22 +2104,37 @@ document.addEventListener(
     event => {
 
         const card =
-            event.target.closest(
-                ".song-card"
-            );
+            event.target.closest(".song-card");
 
         if (!card) return;
 
 
+        /*
+         * Ignore double-clicks on buttons.
+         * The Playlist button is now the
+         * primary way to add songs.
+         */
+
+        if (
+            event.target.closest("button")
+        ) {
+            return;
+        }
+
+
         addToPlaylist({
 
-            song: card.dataset.song,
+            song:
+                card.dataset.song,
 
-            artist: card.dataset.artist,
+            artist:
+                card.dataset.artist,
 
-            file: card.dataset.file,
+            file:
+                card.dataset.file,
 
-            image: card.dataset.image
+            image:
+                card.dataset.image
 
         });
 
@@ -2359,36 +2150,23 @@ function escapeHtml(value) {
 
     return String(value)
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        .replace(/&/g, "&amp;")
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+        .replace(/</g, "&lt;")
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        .replace(/>/g, "&gt;")
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+        .replace(/"/g, "&quot;")
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/'/g, "&#039;");
 }
 
 
 /* =========================================================
    INITIAL LOAD
    ========================================================= */
+
+createPlaylistButtons();
 
 renderFavorites();
 
@@ -2399,38 +2177,3 @@ setupLibraryClicks();
 loadQueue();
 
 updateVolumeIcon();
-
-
-/* =========================================================
-   RIGHT CLICK → PLAYLIST
-   ========================================================= */
-
-document.addEventListener(
-    "contextmenu",
-    event => {
-
-        const card =
-            event.target.closest(
-                ".song-card"
-            );
-
-        if (!card) return;
-
-
-        event.preventDefault();
-
-
-        addToPlaylist({
-
-            song: card.dataset.song,
-
-            artist: card.dataset.artist,
-
-            file: card.dataset.file,
-
-            image: card.dataset.image
-
-        });
-
-    }
-);
