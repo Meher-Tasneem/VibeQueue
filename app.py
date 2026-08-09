@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from queue import MusicQueue
+from music_queue import MusicQueue
 
 app = Flask(__name__)
 
