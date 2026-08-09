@@ -1,5 +1,5 @@
 /* =========================================================
-   VIBEQUEUE-JavasSript
+   VIBEQUEUE — FINAL APP.JS
    ========================================================= */
 
 const audio = document.getElementById("audio");
@@ -24,11 +24,6 @@ const toast = document.getElementById("toast");
 let currentData = null;
 let repeat = false;
 
-
-/* =========================================================
-   STORAGE
-   ========================================================= */
-
 let favorites = JSON.parse(
     localStorage.getItem("vibequeueFavorites") || "[]"
 );
@@ -47,7 +42,6 @@ let myPlaylist = JSON.parse(
    ========================================================= */
 
 function showToast(message) {
-
     if (!toast) return;
 
     toast.textContent = message;
@@ -102,10 +96,9 @@ function saveRecentlyPlayed(data) {
 
     if (!data) return;
 
-    recentlyPlayed =
-        recentlyPlayed.filter(
-            song => song.song !== data.song
-        );
+    recentlyPlayed = recentlyPlayed.filter(
+        song => song.song !== data.song
+    );
 
     recentlyPlayed.unshift({
         song: data.song,
@@ -125,20 +118,12 @@ function saveRecentlyPlayed(data) {
 
 
 /* =========================================================
-   REMOVE ONE RECENTLY PLAYED SONG
+   REMOVE RECENTLY PLAYED
    ========================================================= */
 
 function removeRecentlyPlayed(index) {
 
-    if (
-        index < 0 ||
-        index >= recentlyPlayed.length
-    ) {
-        return;
-    }
-
-    const song =
-        recentlyPlayed[index];
+    if (!recentlyPlayed[index]) return;
 
     recentlyPlayed.splice(index, 1);
 
@@ -147,75 +132,7 @@ function removeRecentlyPlayed(index) {
         JSON.stringify(recentlyPlayed)
     );
 
-    showToast(
-        song.song +
-        " removed from Recently Played"
-    );
-
-    const overlay =
-        document.getElementById(
-            "libraryOverlay"
-        );
-
-    if (
-        overlay &&
-        overlay.classList.contains("show")
-    ) {
-
-        const title =
-            document.getElementById(
-                "libraryModalTitle"
-            );
-
-        const subtitle =
-            document.getElementById(
-                "libraryModalSubtitle"
-            );
-
-        if (title) {
-            title.textContent =
-                "🕘 Recently Played";
-        }
-
-        if (subtitle) {
-            subtitle.textContent =
-                recentlyPlayed.length +
-                " recently played";
-        }
-
-        renderRecentlyPlayedModal();
-    }
-}
-
-
-/* =========================================================
-   CLEAR ALL RECENTLY PLAYED
-   ========================================================= */
-
-function clearRecentlyPlayed() {
-
-    if (recentlyPlayed.length === 0) {
-        return;
-    }
-
-    const yes =
-        confirm(
-            "Remove all recently played songs?"
-        );
-
-    if (!yes) return;
-
-    recentlyPlayed = [];
-
-    localStorage.removeItem(
-        "vibequeueRecentlyPlayed"
-    );
-
-    showToast(
-        "Recently Played cleared"
-    );
-
-    renderRecentlyPlayedModal();
+    showToast("Removed from Recently Played");
 
     const subtitle =
         document.getElementById(
@@ -224,8 +141,11 @@ function clearRecentlyPlayed() {
 
     if (subtitle) {
         subtitle.textContent =
-            "0 recently played";
+            recentlyPlayed.length +
+            " recently played";
     }
+
+    renderRecentlyPlayedModal();
 }
 
 
@@ -242,68 +162,39 @@ function setPlayerPoster(image) {
 
     if (!imagePath) {
 
-        playerPoster.style.display =
-            "none";
+        playerPoster.style.display = "none";
 
         if (miniPlaceholder) {
-            miniPlaceholder.style.display =
-                "grid";
+            miniPlaceholder.style.display = "grid";
         }
 
         return;
     }
 
     if (miniPlaceholder) {
-        miniPlaceholder.style.display =
-            "none";
+        miniPlaceholder.style.display = "none";
     }
 
-    playerPoster.style.display =
-        "block";
+    playerPoster.style.display = "block";
+    playerPoster.src = imagePath;
 
-    playerPoster.style.visibility =
-        "visible";
+    playerPoster.onerror = function () {
 
-    playerPoster.style.opacity =
-        "1";
+        this.style.display = "none";
 
-    playerPoster.src =
-        imagePath;
+        if (miniPlaceholder) {
+            miniPlaceholder.style.display = "grid";
+        }
+    };
 
-    playerPoster.onerror =
-        function () {
+    playerPoster.onload = function () {
 
-            console.error(
-                "Player poster not found:",
-                imagePath
-            );
+        this.style.display = "block";
 
-            this.style.display =
-                "none";
-
-            if (miniPlaceholder) {
-                miniPlaceholder.style.display =
-                    "grid";
-            }
-        };
-
-    playerPoster.onload =
-        function () {
-
-            this.style.display =
-                "block";
-
-            this.style.visibility =
-                "visible";
-
-            this.style.opacity =
-                "1";
-
-            if (miniPlaceholder) {
-                miniPlaceholder.style.display =
-                    "none";
-            }
-        };
+        if (miniPlaceholder) {
+            miniPlaceholder.style.display = "none";
+        }
+    };
 }
 
 
@@ -336,52 +227,34 @@ function playSong(data) {
     document
         .querySelectorAll(".song-card")
         .forEach(card => {
-
-            card.classList.remove(
-                "now-playing"
-            );
-
+            card.classList.remove("now-playing");
         });
 
     if (data.card) {
-
-        data.card.classList.add(
-            "now-playing"
-        );
-
+        data.card.classList.add("now-playing");
     }
 
     audio.play()
-
         .then(() => {
 
             if (player) {
-                player.classList.add(
-                    "playing"
-                );
+                player.classList.add("playing");
             }
 
-            mainPlay.textContent =
-                "❚❚";
+            mainPlay.textContent = "❚❚";
 
             showToast(
                 data.song +
                 " is playing 🎧"
             );
-
         })
-
         .catch(error => {
 
-            console.error(
-                "Audio error:",
-                error
-            );
+            console.error("Audio error:", error);
 
             showToast(
                 "Couldn't play this song."
             );
-
         });
 }
 
@@ -438,9 +311,7 @@ async function startListening() {
             )
         );
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
@@ -474,13 +345,9 @@ function togglePlay() {
     }
 
     if (audio.paused) {
-
         audio.play();
-
     } else {
-
         audio.pause();
-
     }
 }
 
@@ -489,95 +356,59 @@ function togglePlay() {
    AUDIO EVENTS
    ========================================================= */
 
-audio.addEventListener(
-    "play",
-    () => {
+audio.addEventListener("play", () => {
 
-        if (player) {
-            player.classList.add(
-                "playing"
-            );
-        }
-
-        mainPlay.textContent =
-            "❚❚";
-
+    if (player) {
+        player.classList.add("playing");
     }
-);
+
+    mainPlay.textContent = "❚❚";
+});
 
 
-audio.addEventListener(
-    "pause",
-    () => {
+audio.addEventListener("pause", () => {
 
-        if (player) {
-            player.classList.remove(
-                "playing"
-            );
-        }
-
-        mainPlay.textContent =
-            "▶";
-
+    if (player) {
+        player.classList.remove("playing");
     }
-);
+
+    mainPlay.textContent = "▶";
+});
 
 
-audio.addEventListener(
-    "loadedmetadata",
-    () => {
+audio.addEventListener("loadedmetadata", () => {
 
-        duration.textContent =
-            formatTime(
-                audio.duration
-            );
+    duration.textContent =
+        formatTime(audio.duration);
+});
 
+
+audio.addEventListener("timeupdate", () => {
+
+    if (!audio.duration) return;
+
+    progressBar.value =
+        (audio.currentTime /
+            audio.duration) * 100;
+
+    currentTime.textContent =
+        formatTime(audio.currentTime);
+});
+
+
+audio.addEventListener("ended", async () => {
+
+    if (repeat) {
+
+        audio.currentTime = 0;
+
+        audio.play();
+
+        return;
     }
-);
 
-
-audio.addEventListener(
-    "timeupdate",
-    () => {
-
-        if (!audio.duration) return;
-
-        progressBar.value =
-            (
-                audio.currentTime /
-                audio.duration
-            ) * 100;
-
-        currentTime.textContent =
-            formatTime(
-                audio.currentTime
-            );
-
-    }
-);
-
-
-/* =========================================================
-   SONG ENDED
-   ========================================================= */
-
-audio.addEventListener(
-    "ended",
-    async () => {
-
-        if (repeat) {
-
-            audio.currentTime = 0;
-
-            audio.play();
-
-            return;
-        }
-
-        await nextSong(true);
-
-    }
-);
+    await nextSong(true);
+});
 
 
 /* =========================================================
@@ -586,29 +417,19 @@ audio.addEventListener(
 
 function formatTime(seconds) {
 
-    if (
-        !Number.isFinite(seconds)
-    ) {
+    if (!Number.isFinite(seconds)) {
         return "0:00";
     }
 
     const minutes =
-        Math.floor(
-            seconds / 60
-        );
+        Math.floor(seconds / 60);
 
     const secondsPart =
-        Math.floor(
-            seconds % 60
-        )
-        .toString()
-        .padStart(2, "0");
+        Math.floor(seconds % 60)
+            .toString()
+            .padStart(2, "0");
 
-    return (
-        minutes +
-        ":" +
-        secondsPart
-    );
+    return minutes + ":" + secondsPart;
 }
 
 
@@ -616,38 +437,39 @@ function formatTime(seconds) {
    PROGRESS
    ========================================================= */
 
-progressBar.addEventListener(
-    "input",
-    () => {
+if (progressBar) {
 
-        if (!audio.duration) return;
+    progressBar.addEventListener(
+        "input",
+        () => {
 
-        audio.currentTime =
-            (
-                progressBar.value /
-                100
-            ) *
-            audio.duration;
+            if (!audio.duration) return;
 
-    }
-);
+            audio.currentTime =
+                (progressBar.value / 100) *
+                audio.duration;
+        }
+    );
+}
 
 
 /* =========================================================
    VOLUME
    ========================================================= */
 
-volume.addEventListener(
-    "input",
-    () => {
+if (volume) {
 
-        audio.volume =
-            volume.value;
+    volume.addEventListener(
+        "input",
+        () => {
 
-        updateVolumeIcon();
+            audio.volume =
+                volume.value;
 
-    }
-);
+            updateVolumeIcon();
+        }
+    );
+}
 
 audio.volume = 0.8;
 
@@ -662,17 +484,11 @@ function updateVolumeIcon() {
     if (!icon) return;
 
     if (audio.volume === 0) {
-
         icon.textContent = "🔇";
-
     } else if (audio.volume < 0.5) {
-
         icon.textContent = "🔉";
-
     } else {
-
         icon.textContent = "🔊";
-
     }
 }
 
@@ -695,17 +511,14 @@ async function queueCard(button) {
                 "/add-to-queue",
                 {
                     method: "POST",
-
                     headers: {
                         "Content-Type":
                             "application/json"
                     },
-
-                    body:
-                        JSON.stringify({
-                            song: data.song,
-                            artist: data.artist
-                        })
+                    body: JSON.stringify({
+                        song: data.song,
+                        artist: data.artist
+                    })
                 }
             );
 
@@ -727,19 +540,15 @@ async function queueCard(button) {
                 result.message ||
                 "Couldn't add song."
             );
-
         }
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
         showToast(
             "Server connection error."
         );
-
     }
 }
 
@@ -761,34 +570,29 @@ async function loadQueue() {
         const queue =
             result.queue || [];
 
-        queueStatus.textContent =
-            queue.length +
-            (
-                queue.length === 1
-                    ? " song waiting"
-                    : " songs waiting"
-            );
+        if (queueStatus) {
+
+            queueStatus.textContent =
+                queue.length +
+                (
+                    queue.length === 1
+                        ? " song waiting"
+                        : " songs waiting"
+                );
+        }
+
+        if (!queueBox) return;
 
         if (queue.length === 0) {
 
             queueBox.innerHTML = `
-
                 <div class="empty-box">
-
-                    <div class="empty-icon">
-                        ≋
-                    </div>
-
-                    <b>
-                        Your queue is empty
-                    </b>
-
+                    <div class="empty-icon">≋</div>
+                    <b>Your queue is empty</b>
                     <small>
                         Add songs above and they'll appear here.
                     </small>
-
                 </div>
-
             `;
 
             return;
@@ -797,54 +601,39 @@ async function loadQueue() {
         queueBox.innerHTML =
             queue.map(
                 (song, index) => `
+                    <div class="queue-song">
 
-                <div class="queue-song">
+                        <div class="queue-number">
+                            ${String(index + 1).padStart(2, "0")}
+                        </div>
 
-                    <div class="queue-number">
-                        ${String(
-                            index + 1
-                        ).padStart(2, "0")}
-                    </div>
+                        <div>
+                            <b>
+                                ${escapeHtml(song.song)}
+                            </b>
 
-                    <div>
+                            <small>
+                                ${escapeHtml(song.artist)}
+                            </small>
+                        </div>
 
-                        <b>
-                            ${escapeHtml(
-                                song.song
-                            )}
-                        </b>
-
-                        <small>
-                            ${escapeHtml(
-                                song.artist
-                            )}
-                        </small>
-
-                    </div>
-
-                    <div class="queue-wave">
-
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                        <i></i>
+                        <div class="queue-wave">
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                        </div>
 
                     </div>
-
-                </div>
-
-            `
+                `
             ).join("");
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Queue error:",
             error
         );
-
     }
 }
 
@@ -873,11 +662,9 @@ async function nextSong(auto = false) {
             await loadQueue();
 
             if (!auto) {
-
                 showToast(
                     "Your queue is empty."
                 );
-
             }
 
             return;
@@ -899,11 +686,8 @@ async function nextSong(auto = false) {
                 card.dataset.song ===
                 queuedSong.song
             ) {
-
                 matchingCard = card;
-
             }
-
         });
 
         if (!matchingCard) {
@@ -920,29 +704,22 @@ async function nextSong(auto = false) {
         playSong({
 
             card: matchingCard,
-
             song: queuedSong.song,
-
             artist: queuedSong.artist,
-
             file: matchingCard.dataset.file,
-
             image: matchingCard.dataset.image
 
         });
 
         await loadQueue();
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
         showToast(
             "Could not play next song."
         );
-
     }
 }
 
@@ -953,12 +730,11 @@ async function nextSong(auto = false) {
 
 function previousSong() {
 
-    const cards =
-        [
-            ...document.querySelectorAll(
-                ".song-card"
-            )
-        ];
+    const cards = [
+        ...document.querySelectorAll(
+            ".song-card"
+        )
+    ];
 
     if (!cards.length) return;
 
@@ -982,11 +758,7 @@ function previousSong() {
 
     const previous =
         cards[
-            (
-                index -
-                1 +
-                cards.length
-            ) %
+            (index - 1 + cards.length) %
             cards.length
         ];
 
@@ -1004,19 +776,17 @@ function previousSong() {
 
 function shuffle() {
 
-    const cards =
-        [
-            ...document.querySelectorAll(
-                ".song-card"
-            )
-        ];
+    const cards = [
+        ...document.querySelectorAll(
+            ".song-card"
+        )
+    ];
 
     if (!cards.length) return;
 
     const random =
         Math.floor(
-            Math.random() *
-            cards.length
+            Math.random() * cards.length
         );
 
     playCard(
@@ -1040,24 +810,20 @@ function repeatSong() {
             "repeatButton"
         );
 
+    if (!button) return;
+
     if (repeat) {
 
         button.style.color =
             "#a18aff";
 
-        showToast(
-            "Repeat ON 🔁"
-        );
+        showToast("Repeat ON 🔁");
 
     } else {
 
-        button.style.color =
-            "";
+        button.style.color = "";
 
-        showToast(
-            "Repeat OFF"
-        );
-
+        showToast("Repeat OFF");
     }
 }
 
@@ -1105,15 +871,10 @@ function favoriteSong(button) {
             1
         );
 
-        button.classList.remove(
-            "liked"
-        );
-
-        button.textContent =
-            "♡";
+        button.classList.remove("liked");
+        button.textContent = "♡";
 
         saveFavorites();
-
         renderFavorites();
 
         showToast(
@@ -1132,16 +893,10 @@ function favoriteSong(button) {
 
     });
 
-    button.classList.add(
-        "liked"
-    );
+    button.classList.add("liked");
+    button.textContent = "♥";
 
-    button.textContent =
-        "♥";
-
-    button.classList.add(
-        "heart-pop"
-    );
+    button.classList.add("heart-pop");
 
     setTimeout(() => {
 
@@ -1152,7 +907,6 @@ function favoriteSong(button) {
     }, 450);
 
     saveFavorites();
-
     renderFavorites();
 
     showToast(
@@ -1172,38 +926,25 @@ function renderFavorites() {
     if (favorites.length === 0) {
 
         favoritesBox.innerHTML = `
-
-            <div class="empty-icon">
-                ♡
-            </div>
-
-            <b>
-                No favorite songs yet
-            </b>
-
+            <div class="empty-icon">♡</div>
+            <b>No favorite songs yet</b>
             <small>
                 Tap ♡ on a song to add it here.
             </small>
-
         `;
 
         return;
     }
 
     favoritesBox.innerHTML = `
-
-        <div
-            style="
-                width:100%;
-                padding:10px 15px;
-            "
-        >
+        <div style="
+            width:100%;
+            padding:10px 15px;
+        ">
 
             ${favorites.map(
                 (song, index) => `
-
-                <div
-                    style="
+                    <div style="
                         display:flex;
                         align-items:center;
                         gap:12px;
@@ -1213,83 +954,77 @@ function renderFavorites() {
                         background:#15161f;
                         border:1px solid #252a36;
                         text-align:left;
-                    "
-                >
+                    ">
 
-                    <img
-                        src="${getImagePath(song.image)}"
-                        alt="${escapeHtml(song.song)}"
-                        style="
-                            width:50px;
-                            height:50px;
-                            object-fit:cover;
-                            border-radius:10px;
-                            flex-shrink:0;
-                        "
-                    >
+                        <img
+                            src="${getImagePath(song.image)}"
+                            alt="${escapeHtml(song.song)}"
+                            style="
+                                width:50px;
+                                height:50px;
+                                object-fit:cover;
+                                border-radius:10px;
+                                flex-shrink:0;
+                            "
+                        >
 
-                    <div
-                        style="
+                        <div style="
                             flex:1;
                             min-width:0;
-                        "
-                    >
+                        ">
 
-                        <b
-                            style="
+                            <b style="
                                 display:block;
                                 color:#fff;
                                 font-size:13px;
-                            "
-                        >
-                            ${escapeHtml(song.song)}
-                        </b>
+                            ">
+                                ${escapeHtml(song.song)}
+                            </b>
 
-                        <small
-                            style="
+                            <small style="
                                 display:block;
                                 color:#777e8e;
                                 margin-top:4px;
-                            "
-                        >
-                            ${escapeHtml(song.artist)}
-                        </small>
+                            ">
+                                ${escapeHtml(song.artist)}
+                            </small>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            onclick="playFavorite(${index})"
+                            style="
+                                border:0;
+                                width:36px;
+                                height:36px;
+                                border-radius:50%;
+                                background:white;
+                                color:#08080d;
+                                cursor:pointer;
+                                flex-shrink:0;
+                            ">
+                            ▶
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="removeFavorite(${index})"
+                            style="
+                                border:0;
+                                width:36px;
+                                height:36px;
+                                border-radius:50%;
+                                background:#ff5c8a;
+                                color:white;
+                                cursor:pointer;
+                                flex-shrink:0;
+                            ">
+                            ♥
+                        </button>
 
                     </div>
-
-                    <button
-                        onclick="playFavorite(${index})"
-                        style="
-                            border:0;
-                            width:36px;
-                            height:36px;
-                            border-radius:50%;
-                            background:white;
-                            color:#08080d;
-                            cursor:pointer;
-                        "
-                    >
-                        ▶
-                    </button>
-
-                    <button
-                        onclick="removeFavorite(${index})"
-                        style="
-                            border:0;
-                            width:36px;
-                            height:36px;
-                            border-radius:50%;
-                            background:#ff5c8a;
-                            color:white;
-                            cursor:pointer;
-                        "
-                    >
-                        ♥
-                    </button>
-
-                </div>
-
-            `
+                `
             ).join("")}
 
         </div>
@@ -1321,23 +1056,16 @@ function playFavorite(index) {
             card.dataset.song ===
             song.song
         ) {
-
             matchingCard = card;
-
         }
-
     });
 
     playSong({
 
         card: matchingCard,
-
         song: song.song,
-
         artist: song.artist,
-
         file: song.file,
-
         image: song.image
 
     });
@@ -1358,13 +1086,10 @@ function removeFavorite(index) {
     favorites.splice(index, 1);
 
     saveFavorites();
-
     renderFavorites();
 
     document
-        .querySelectorAll(
-            ".song-card"
-        )
+        .querySelectorAll(".song-card")
         .forEach(card => {
 
             if (
@@ -1385,11 +1110,8 @@ function removeFavorite(index) {
 
                     heart.textContent =
                         "♡";
-
                 }
-
             }
-
         });
 
     showToast(
@@ -1405,15 +1127,11 @@ function removeFavorite(index) {
 function restoreFavoriteHearts() {
 
     document
-        .querySelectorAll(
-            ".song-card"
-        )
+        .querySelectorAll(".song-card")
         .forEach(card => {
 
             const heart =
-                card.querySelector(
-                    ".heart"
-                );
+                card.querySelector(".heart");
 
             if (
                 heart &&
@@ -1422,15 +1140,9 @@ function restoreFavoriteHearts() {
                 )
             ) {
 
-                heart.classList.add(
-                    "liked"
-                );
-
-                heart.textContent =
-                    "♥";
-
+                heart.classList.add("liked");
+                heart.textContent = "♥";
             }
-
         });
 }
 
@@ -1468,19 +1180,15 @@ async function clearQueue() {
             showToast(
                 "Vibe cleared 🫧"
             );
-
         }
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
         showToast(
             "Could not clear queue."
         );
-
     }
 }
 
@@ -1527,18 +1235,14 @@ if (searchInput) {
                     artist.includes(text)
                 ) {
 
-                    card.style.display =
-                        "";
-
+                    card.style.display = "";
                     count++;
 
                 } else {
 
                     card.style.display =
                         "none";
-
                 }
-
             });
 
             const songCount =
@@ -1555,11 +1259,250 @@ if (searchInput) {
                             ? " song"
                             : " songs"
                     );
-
             }
-
         }
     );
+}
+
+
+/* =========================================================
+   PLAYLIST
+   ========================================================= */
+
+function savePlaylist() {
+
+    localStorage.setItem(
+        "vibequeuePlaylist",
+        JSON.stringify(myPlaylist)
+    );
+}
+
+
+/* =========================================================
+   ADD CARD TO PLAYLIST
+   ========================================================= */
+
+function addCardToPlaylist(button) {
+
+    const data =
+        getSongData(button);
+
+    if (!data) return;
+
+    addToPlaylist(data);
+}
+
+
+/* =========================================================
+   ADD TO PLAYLIST
+   ========================================================= */
+
+function addToPlaylist(data) {
+
+    if (!data) return;
+
+    const exists =
+        myPlaylist.some(
+            song =>
+                song.song ===
+                data.song
+        );
+
+    if (exists) {
+
+        showToast(
+            "Already in My Playlist 🎵"
+        );
+
+        return;
+    }
+
+    myPlaylist.push({
+
+        song: data.song,
+        artist: data.artist,
+        file: data.file,
+        image: data.image
+
+    });
+
+    savePlaylist();
+
+    showToast(
+        data.song +
+        " added to My Playlist 🎵"
+    );
+}
+
+
+/* =========================================================
+   REMOVE FROM PLAYLIST
+   ========================================================= */
+
+function removeFromPlaylist(index) {
+
+    const song =
+        myPlaylist[index];
+
+    if (!song) return;
+
+    myPlaylist.splice(index, 1);
+
+    savePlaylist();
+
+    showToast(
+        "Removed from My Playlist"
+    );
+
+    const subtitle =
+        document.getElementById(
+            "libraryModalSubtitle"
+        );
+
+    if (subtitle) {
+
+        subtitle.textContent =
+            myPlaylist.length +
+            (
+                myPlaylist.length === 1
+                    ? " song"
+                    : " songs"
+            );
+    }
+
+    renderPlaylistModal();
+}
+
+
+/* =========================================================
+   PLAYLIST MODAL
+   ========================================================= */
+
+function renderPlaylistModal() {
+
+    const body =
+        document.getElementById(
+            "libraryModalBody"
+        );
+
+    if (!body) return;
+
+    if (myPlaylist.length === 0) {
+
+        body.innerHTML = `
+
+            <div class="library-empty">
+
+                <div>🎵</div>
+
+                <b>
+                    Your playlist is empty
+                </b>
+
+                <p>
+                    Use the 🎵 Playlist button
+                    on a song to add it here.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    body.innerHTML =
+        myPlaylist.map(
+            (song, index) => `
+
+                <div class="library-song">
+
+                    <img
+                        src="${getImagePath(song.image)}"
+                        alt="${escapeHtml(song.song)}"
+                    >
+
+                    <div class="library-song-info">
+
+                        <b>
+                            ${escapeHtml(song.song)}
+                        </b>
+
+                        <small>
+                            ${escapeHtml(song.artist)}
+                        </small>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="library-play"
+                        onclick="playPlaylistSong(${index})"
+                        title="Play">
+                        ▶
+                    </button>
+
+                    <button
+                        type="button"
+                        class="library-remove"
+                        onclick="removeFromPlaylist(${index})"
+                        title="Remove">
+                        🗑
+                    </button>
+
+                </div>
+            `
+        ).join("");
+}
+
+
+/* =========================================================
+   PLAY PLAYLIST SONG
+   ========================================================= */
+
+function playPlaylistSong(index) {
+
+    const song =
+        myPlaylist[index];
+
+    if (!song) return;
+
+    closeLibrary();
+
+    const cards =
+        document.querySelectorAll(
+            ".song-card"
+        );
+
+    let card = null;
+
+    cards.forEach(item => {
+
+        if (
+            item.dataset.song ===
+            song.song
+        ) {
+            card = item;
+        }
+    });
+
+    playSong({
+
+        card: card,
+        song: song.song,
+        artist: song.artist,
+        file: song.file,
+        image: song.image
+
+    });
+}
+
+
+/* =========================================================
+   CREATE PLAYLIST
+   ========================================================= */
+
+function createPlaylist() {
+    openLibrary("playlist");
 }
 
 
@@ -1576,9 +1519,7 @@ function createLibraryModal() {
     ) return;
 
     const overlay =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     overlay.id =
         "libraryOverlay";
@@ -1586,39 +1527,9 @@ function createLibraryModal() {
     overlay.className =
         "library-overlay";
 
-    /*
-       MOBILE FIX
-       Force the overlay to behave as a real
-       full-screen modal.
-    */
-
-    overlay.style.position =
-        "fixed";
-
-    overlay.style.inset =
-        "0";
-
-    overlay.style.zIndex =
-        "999999";
-
-    overlay.style.width =
-        "100vw";
-
-    overlay.style.height =
-        "100vh";
-
-    overlay.style.pointerEvents =
-        "auto";
-
     overlay.innerHTML = `
 
-        <div
-            class="library-modal"
-            style="
-                max-height:90vh;
-                overflow:hidden;
-            "
-        >
+        <div class="library-modal">
 
             <div class="library-modal-header">
 
@@ -1637,8 +1548,7 @@ function createLibraryModal() {
                 <button
                     type="button"
                     class="library-close"
-                    onclick="closeLibrary()"
-                >
+                    onclick="closeLibrary()">
                     ×
                 </button>
 
@@ -1646,16 +1556,10 @@ function createLibraryModal() {
 
             <div
                 class="library-modal-body"
-                id="libraryModalBody"
-                style="
-                    overflow-y:auto;
-                    -webkit-overflow-scrolling:touch;
-                    touch-action:pan-y;
-                "
-            ></div>
+                id="libraryModalBody">
+            </div>
 
         </div>
-
     `;
 
     overlay.addEventListener(
@@ -1666,17 +1570,12 @@ function createLibraryModal() {
                 event.target ===
                 overlay
             ) {
-
                 closeLibrary();
-
             }
-
         }
     );
 
-    document.body.appendChild(
-        overlay
-    );
+    document.body.appendChild(overlay);
 }
 
 
@@ -1705,34 +1604,11 @@ function openLibrary(type) {
 
     if (!overlay) return;
 
-    /*
-       MOBILE FIX:
-       Do NOT depend only on .show CSS.
-    */
+    overlay.classList.add("show");
 
-    overlay.classList.add(
-        "show"
+    document.body.classList.add(
+        "library-open"
     );
-
-    overlay.style.display =
-        "flex";
-
-    overlay.style.visibility =
-        "visible";
-
-    overlay.style.opacity =
-        "1";
-
-    overlay.style.pointerEvents =
-        "auto";
-
-    document.body.style.overflow =
-        "hidden";
-
-
-    /* =====================================================
-       LIBRARY HOME
-       ===================================================== */
 
     if (!type) {
 
@@ -1746,11 +1622,6 @@ function openLibrary(type) {
 
         return;
     }
-
-
-    /* =====================================================
-       PLAYLIST
-       ===================================================== */
 
     if (type === "playlist") {
 
@@ -1770,11 +1641,6 @@ function openLibrary(type) {
         return;
     }
 
-
-    /* =====================================================
-       RECENT
-       ===================================================== */
-
     if (type === "recent") {
 
         title.textContent =
@@ -1788,11 +1654,6 @@ function openLibrary(type) {
 
         return;
     }
-
-
-    /* =====================================================
-       LIKED
-       ===================================================== */
 
     if (type === "liked") {
 
@@ -1808,8 +1669,6 @@ function openLibrary(type) {
             );
 
         renderFavoritesModal();
-
-        return;
     }
 }
 
@@ -1834,14 +1693,14 @@ function renderLibraryHome() {
             <button
                 type="button"
                 class="library-choice"
-                onclick="openLibrary('playlist')"
-            >
+                onclick="openLibrary('playlist')">
 
                 <div class="library-choice-icon">
                     🎵
                 </div>
 
                 <div>
+
                     <b>My Playlist</b>
 
                     <small>
@@ -1852,6 +1711,7 @@ function renderLibraryHome() {
                                 : " songs"
                         }
                     </small>
+
                 </div>
 
                 <span>›</span>
@@ -1862,22 +1722,21 @@ function renderLibraryHome() {
             <button
                 type="button"
                 class="library-choice"
-                onclick="openLibrary('recent')"
-            >
+                onclick="openLibrary('recent')">
 
                 <div class="library-choice-icon">
                     🕘
                 </div>
 
                 <div>
+
                     <b>Recently Played</b>
 
                     <small>
-                        ${
-                            recentlyPlayed.length
-                        }
+                        ${recentlyPlayed.length}
                         recently played
                     </small>
+
                 </div>
 
                 <span>›</span>
@@ -1888,14 +1747,14 @@ function renderLibraryHome() {
             <button
                 type="button"
                 class="library-choice"
-                onclick="openLibrary('liked')"
-            >
+                onclick="openLibrary('liked')">
 
                 <div class="library-choice-icon">
                     ❤️
                 </div>
 
                 <div>
+
                     <b>Liked Songs</b>
 
                     <small>
@@ -1906,6 +1765,7 @@ function renderLibraryHome() {
                                 : " favorites"
                         }
                     </small>
+
                 </div>
 
                 <span>›</span>
@@ -1913,7 +1773,6 @@ function renderLibraryHome() {
             </button>
 
         </div>
-
     `;
 }
 
@@ -1930,31 +1789,17 @@ function closeLibrary() {
         );
 
     if (overlay) {
-
-        overlay.classList.remove(
-            "show"
-        );
-
-        overlay.style.display =
-            "none";
-
-        overlay.style.visibility =
-            "hidden";
-
-        overlay.style.opacity =
-            "0";
-
-        overlay.style.pointerEvents =
-            "none";
+        overlay.classList.remove("show");
     }
 
-    document.body.style.overflow =
-        "";
+    document.body.classList.remove(
+        "library-open"
+    );
 }
 
 
 /* =========================================================
-   RECENTLY PLAYED MODAL
+   RECENTLY PLAYED
    ========================================================= */
 
 function renderRecentlyPlayedModal() {
@@ -1983,112 +1828,58 @@ function renderRecentlyPlayedModal() {
                 </p>
 
             </div>
-
         `;
 
         return;
     }
 
-
-    body.innerHTML = `
-
-        <div
-            style="
-                display:flex;
-                justify-content:flex-end;
-                padding:0 4px 10px;
-            "
-        >
-
-            <button
-                type="button"
-                onclick="clearRecentlyPlayed()"
-                style="
-                    border:1px solid #343846;
-                    background:#171820;
-                    color:#ff6b91;
-                    border-radius:10px;
-                    padding:7px 12px;
-                    cursor:pointer;
-                    font-size:12px;
-                "
-            >
-                Clear all
-            </button>
-
-        </div>
-
-
-        ${recentlyPlayed.map(
+    body.innerHTML =
+        recentlyPlayed.map(
             (song, index) => `
 
-            <div
-                class="library-song"
-                style="
-                    position:relative;
-                "
-            >
+                <div class="library-song">
 
-                <img
-                    src="${getImagePath(song.image)}"
-                    alt="${escapeHtml(song.song)}"
-                >
+                    <img
+                        src="${getImagePath(song.image)}"
+                        alt="${escapeHtml(song.song)}"
+                    >
 
-                <div class="library-song-info">
+                    <div class="library-song-info">
 
-                    <b>
-                        ${escapeHtml(song.song)}
-                    </b>
+                        <b>
+                            ${escapeHtml(song.song)}
+                        </b>
 
-                    <small>
-                        ${escapeHtml(song.artist)}
-                    </small>
+                        <small>
+                            ${escapeHtml(song.artist)}
+                        </small>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="library-play"
+                        onclick="playRecentlyPlayed(${index})"
+                        title="Play">
+                        ▶
+                    </button>
+
+                    <button
+                        type="button"
+                        class="library-remove"
+                        onclick="removeRecentlyPlayed(${index})"
+                        title="Remove">
+                        🗑
+                    </button>
 
                 </div>
-
-                <button
-                    type="button"
-                    class="library-play"
-                    onclick="playRecentlyPlayed(${index})"
-                >
-                    ▶
-                </button>
-
-                <button
-                    type="button"
-                    onclick="removeRecentlyPlayed(${index})"
-                    aria-label="Remove from recently played"
-                    style="
-                        width:34px;
-                        height:34px;
-                        min-width:34px;
-                        border:0;
-                        border-radius:50%;
-                        background:#252630;
-                        color:#ff6b91;
-                        font-size:20px;
-                        line-height:1;
-                        cursor:pointer;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        margin-left:5px;
-                    "
-                >
-                    ×
-                </button>
-
-            </div>
-
-        `
-        ).join("")}
-
-    `;
+            `
+        ).join("");
 }
 
 
 /* =========================================================
-   PLAY RECENT SONG
+   PLAY RECENTLY PLAYED
    ========================================================= */
 
 function playRecentlyPlayed(index) {
@@ -2113,23 +1904,16 @@ function playRecentlyPlayed(index) {
             item.dataset.song ===
             song.song
         ) {
-
             card = item;
-
         }
-
     });
 
     playSong({
 
         card: card,
-
         song: song.song,
-
         artist: song.artist,
-
         file: song.file,
-
         image: song.image
 
     });
@@ -2137,188 +1921,7 @@ function playRecentlyPlayed(index) {
 
 
 /* =========================================================
-   MY PLAYLIST
-   ========================================================= */
-
-function savePlaylist() {
-
-    localStorage.setItem(
-        "vibequeuePlaylist",
-        JSON.stringify(myPlaylist)
-    );
-}
-
-
-function addToPlaylist(data) {
-
-    if (!data) return;
-
-    const exists =
-        myPlaylist.some(
-            song =>
-                song.song ===
-                data.song
-        );
-
-    if (exists) {
-
-        showToast(
-            "Already in My Playlist 🎵"
-        );
-
-        return;
-    }
-
-    myPlaylist.push({
-
-        song: data.song,
-
-        artist: data.artist,
-
-        file: data.file,
-
-        image: data.image
-
-    });
-
-    savePlaylist();
-
-    showToast(
-        data.song +
-        " added to My Playlist 🎵"
-    );
-}
-
-
-function renderPlaylistModal() {
-
-    const body =
-        document.getElementById(
-            "libraryModalBody"
-        );
-
-    if (!body) return;
-
-    if (myPlaylist.length === 0) {
-
-        body.innerHTML = `
-
-            <div class="library-empty">
-
-                <div>🎵</div>
-
-                <b>
-                    Your playlist is empty
-                </b>
-
-                <p>
-                    Double-click a song to add it here.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-    body.innerHTML =
-        myPlaylist.map(
-            (song, index) => `
-
-            <div class="library-song">
-
-                <img
-                    src="${getImagePath(song.image)}"
-                    alt="${escapeHtml(song.song)}"
-                >
-
-                <div class="library-song-info">
-
-                    <b>
-                        ${escapeHtml(song.song)}
-                    </b>
-
-                    <small>
-                        ${escapeHtml(song.artist)}
-                    </small>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="library-play"
-                    onclick="playPlaylistSong(${index})"
-                >
-                    ▶
-                </button>
-
-            </div>
-
-        `
-        ).join("");
-}
-
-
-function playPlaylistSong(index) {
-
-    const song =
-        myPlaylist[index];
-
-    if (!song) return;
-
-    closeLibrary();
-
-    const cards =
-        document.querySelectorAll(
-            ".song-card"
-        );
-
-    let card = null;
-
-    cards.forEach(item => {
-
-        if (
-            item.dataset.song ===
-            song.song
-        ) {
-
-            card = item;
-
-        }
-
-    });
-
-    playSong({
-
-        card: card,
-
-        song: song.song,
-
-        artist: song.artist,
-
-        file: song.file,
-
-        image: song.image
-
-    });
-}
-
-
-/* =========================================================
-   CREATE PLAYLIST
-   ========================================================= */
-
-function createPlaylist() {
-
-    openLibrary(
-        "playlist"
-    );
-}
-
-
-/* =========================================================
-   LIBRARY SIDEBAR CLICKS
+   LIBRARY SIDEBAR
    ========================================================= */
 
 function setupLibraryClicks() {
@@ -2337,9 +1940,7 @@ function setupLibraryClicks() {
 
         item.addEventListener(
             "click",
-            event => {
-
-                event.preventDefault();
+            () => {
 
                 if (
                     text.includes(
@@ -2347,39 +1948,26 @@ function setupLibraryClicks() {
                     )
                 ) {
 
-                    openLibrary(
-                        "playlist"
-                    );
+                    openLibrary("playlist");
 
-                }
-
-                else if (
+                } else if (
                     text.includes(
                         "recently played"
                     )
                 ) {
 
-                    openLibrary(
-                        "recent"
-                    );
+                    openLibrary("recent");
 
-                }
-
-                else if (
+                } else if (
                     text.includes(
                         "liked songs"
                     )
                 ) {
 
-                    openLibrary(
-                        "liked"
-                    );
-
+                    openLibrary("liked");
                 }
-
             }
         );
-
     });
 }
 
@@ -2414,7 +2002,6 @@ function renderFavoritesModal() {
                 </p>
 
             </div>
-
         `;
 
         return;
@@ -2424,41 +2011,77 @@ function renderFavoritesModal() {
         favorites.map(
             (song, index) => `
 
-            <div class="library-song">
+                <div class="library-song">
 
-                <img
-                    src="${getImagePath(song.image)}"
-                    alt="${escapeHtml(song.song)}"
-                >
+                    <img
+                        src="${getImagePath(song.image)}"
+                        alt="${escapeHtml(song.song)}"
+                    >
 
-                <div class="library-song-info">
+                    <div class="library-song-info">
 
-                    <b>
-                        ${escapeHtml(song.song)}
-                    </b>
+                        <b>
+                            ${escapeHtml(song.song)}
+                        </b>
 
-                    <small>
-                        ${escapeHtml(song.artist)}
-                    </small>
+                        <small>
+                            ${escapeHtml(song.artist)}
+                        </small>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="library-play"
+                        onclick="playFavoriteFromLibrary(${index})">
+                        ▶
+                    </button>
+
+                    <button
+                        type="button"
+                        class="library-remove"
+                        onclick="removeFavoriteFromLibrary(${index})">
+                        🗑
+                    </button>
 
                 </div>
-
-                <button
-                    type="button"
-                    class="library-play"
-                    onclick="playFavoriteFromLibrary(${index})"
-                >
-                    ▶
-                </button>
-
-            </div>
-
-        `
+            `
         ).join("");
 }
 
 
+/* =========================================================
+   REMOVE FAVORITE FROM LIBRARY
+   ========================================================= */
+
+function removeFavoriteFromLibrary(index) {
+
+    if (!favorites[index]) return;
+
+    favorites.splice(index, 1);
+
+    saveFavorites();
+
+    renderFavoritesModal();
+
+    restoreFavoriteHearts();
+
+    showToast(
+        "Removed from Liked Songs"
+    );
+}
+
+
+/* =========================================================
+   PLAY FAVORITE FROM LIBRARY
+   ========================================================= */
+
 function playFavoriteFromLibrary(index) {
+
+    const song =
+        favorites[index];
+
+    if (!song) return;
 
     closeLibrary();
 
@@ -2467,34 +2090,17 @@ function playFavoriteFromLibrary(index) {
 
 
 /* =========================================================
-   DOUBLE CLICK → PLAYLIST
+   IMPORTANT:
+   NO DOUBLE-CLICK PLAYLIST ADD
+   NO DOCUMENT CLICK PLAYLIST HANDLER
+   =========================================================
+
+   Playlist can ONLY be added by:
+
+   onclick="addCardToPlaylist(this)"
+
+   on the actual 🎵 Playlist button.
    ========================================================= */
-
-document.addEventListener(
-    "dblclick",
-    event => {
-
-        const card =
-            event.target.closest(
-                ".song-card"
-            );
-
-        if (!card) return;
-
-        addToPlaylist({
-
-            song: card.dataset.song,
-
-            artist: card.dataset.artist,
-
-            file: card.dataset.file,
-
-            image: card.dataset.image
-
-        });
-
-    }
-);
 
 
 /* =========================================================
@@ -2504,37 +2110,113 @@ document.addEventListener(
 function escapeHtml(value) {
 
     return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
-        .replace(
-            /&/g,
-            "&amp;"
+
+/* =========================================================
+   MOBILE LIBRARY FIX
+   ========================================================= */
+
+function applyMobileLibraryFix() {
+
+    if (
+        document.getElementById(
+            "vibequeueLibraryMobileFix"
         )
+    ) return;
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+    const css =
+        document.createElement("style");
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+    css.id =
+        "vibequeueLibraryMobileFix";
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+    css.textContent = `
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        #libraryOverlay {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100dvh !important;
+            max-height: 100dvh !important;
+            overflow: hidden !important;
+            z-index: 99999 !important;
+            box-sizing: border-box !important;
+        }
+
+        #libraryOverlay .library-modal {
+            max-height: calc(100dvh - 24px) !important;
+            height: auto !important;
+            min-height: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+        #libraryOverlay .library-modal-body {
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding-bottom: 40px !important;
+            box-sizing: border-box !important;
+        }
+
+        #libraryOverlay .library-home {
+            padding-bottom: 30px !important;
+        }
+
+        #libraryOverlay .library-song {
+            flex-shrink: 0 !important;
+        }
+
+        #libraryOverlay .library-remove,
+        #libraryOverlay .library-play {
+            flex-shrink: 0 !important;
+        }
+
+        @media (max-width: 600px) {
+
+            #libraryOverlay {
+                padding: 12px !important;
+                box-sizing: border-box !important;
+            }
+
+            #libraryOverlay .library-modal {
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: calc(100dvh - 24px) !important;
+                border-radius: 20px !important;
+            }
+
+            #libraryOverlay .library-modal-header {
+                flex-shrink: 0 !important;
+            }
+
+            #libraryOverlay .library-modal-body {
+                padding-bottom: 50px !important;
+            }
+        }
+
+    `;
+
+    document.head.appendChild(css);
 }
 
 
 /* =========================================================
    INITIAL LOAD
    ========================================================= */
+
+applyMobileLibraryFix();
 
 renderFavorites();
 
@@ -2545,36 +2227,3 @@ setupLibraryClicks();
 loadQueue();
 
 updateVolumeIcon();
-
-
-/* =========================================================
-   RIGHT CLICK → PLAYLIST
-   ========================================================= */
-
-document.addEventListener(
-    "contextmenu",
-    event => {
-
-        const card =
-            event.target.closest(
-                ".song-card"
-            );
-
-        if (!card) return;
-
-        event.preventDefault();
-
-        addToPlaylist({
-
-            song: card.dataset.song,
-
-            artist: card.dataset.artist,
-
-            file: card.dataset.file,
-
-            image: card.dataset.image
-
-        });
-
-    }
-);

@@ -23,7 +23,6 @@
 
         <div class="logo">
             <div class="logo-icon">♫</div>
-
             <div>
                 <h1>VibeQueue</h1>
                 <span>YOUR MUSIC SPACE</span>
@@ -31,27 +30,21 @@
         </div>
 
         <nav>
-
             <a href="#home" class="nav-item active">
-                <span>⌂</span>
-                Home
+                <span>⌂</span> Home
             </a>
 
             <a href="#songs" class="nav-item">
-                <span>⌕</span>
-                Search
+                <span>⌕</span> Search
             </a>
 
             <a href="#favorites" class="nav-item">
-                <span>♡</span>
-                Favorites
+                <span>♡</span> Favorites
             </a>
 
             <a href="#queue" class="nav-item">
-                <span>♫</span>
-                Queue
+                <span>♫</span> Queue
             </a>
-
         </nav>
 
         <div class="library">
@@ -59,9 +52,7 @@
             <div class="library-title">
                 <span>YOUR LIBRARY</span>
 
-                <button
-                    type="button"
-                    onclick="createPlaylist()">
+                <button type="button" onclick="createPlaylist()">
                     +
                 </button>
             </div>
@@ -126,44 +117,33 @@
         Queue
     </a>
 
-    <button
-        type="button"
-        onclick="openLibrary()">
-
+    <button type="button" onclick="openLibrary()">
         <span>🎵</span>
         Library
-
     </button>
 
 </div>
 
 
 <!-- =========================================================
-     MAIN CONTENT
+     MAIN
      ========================================================= -->
 
 <main class="main">
 
-    <!-- TOP BAR -->
-
     <header class="topbar">
 
         <div class="search">
-
             <span>⌕</span>
 
             <input
                 type="text"
                 id="searchInput"
                 placeholder="Search songs or artists..."
-                autocomplete="off"
-            >
-
+                autocomplete="off">
         </div>
 
-        <button
-            type="button"
-            class="profile">
+        <button type="button" class="profile">
             ◉ Profile
         </button>
 
@@ -203,7 +183,6 @@
             </button>
 
         </div>
-
 
         <div class="vinyl-area">
 
@@ -256,8 +235,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/TumHiHo.jpg') }}"
-                        alt="Tum Hi Ho"
-                    >
+                        alt="Tum Hi Ho">
 
                     <div class="poster-gradient"></div>
 
@@ -284,16 +262,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -314,8 +295,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/Saiyaara.jpg') }}"
-                        alt="Saiyaara"
-                    >
+                        alt="Saiyaara">
 
                     <div class="poster-gradient"></div>
 
@@ -342,16 +322,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -372,8 +355,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/IshqWalaLove.jpg') }}"
-                        alt="Ishq Wala Love"
-                    >
+                        alt="Ishq Wala Love">
 
                     <div class="poster-gradient"></div>
 
@@ -400,16 +382,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -430,8 +415,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/ApnaBanaLe.jpg') }}"
-                        alt="Apna Bana Le"
-                    >
+                        alt="Apna Bana Le">
 
                     <div class="poster-gradient"></div>
 
@@ -458,16 +442,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -480,7 +467,7 @@
             <div
                 class="song-card"
                 data-song="Sapta Sagaradaache Ello"
-                data-artist="Kapli Kapilan"
+                data-artist="Kapil Kapilan"
                 data-file="SaptaSagaradaacheEllo.mp3"
                 data-image="SaptaSagaradaacheEllo.jpg">
 
@@ -488,8 +475,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/SaptaSagaradaacheEllo.jpg') }}"
-                        alt="Sapta Sagaradaache Ello"
-                    >
+                        alt="Sapta Sagaradaache Ello">
 
                     <div class="poster-gradient"></div>
 
@@ -516,16 +502,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -546,8 +535,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/NaaEeSanjege.jpg') }}"
-                        alt="Naa Ee Sanjege"
-                    >
+                        alt="Naa Ee Sanjege">
 
                     <div class="poster-gradient"></div>
 
@@ -574,16 +562,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -604,8 +595,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/Perfect.jpg') }}"
-                        alt="Perfect"
-                    >
+                        alt="Perfect">
 
                     <div class="poster-gradient"></div>
 
@@ -632,16 +622,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -662,8 +655,7 @@
 
                     <img
                         src="{{ url_for('static', filename='images/UntilIFoundYou.jpg') }}"
-                        alt="Until I Found You"
-                    >
+                        alt="Until I Found You">
 
                     <div class="poster-gradient"></div>
 
@@ -690,16 +682,19 @@
 
                 <div class="card-buttons">
 
-                    <button
-                        type="button"
-                        onclick="playCard(this)">
+                    <button type="button" onclick="playCard(this)">
                         ▶ Play
+                    </button>
+
+                    <button type="button" onclick="queueCard(this)">
+                        ＋ Queue
                     </button>
 
                     <button
                         type="button"
-                        onclick="queueCard(this)">
-                        ＋ Queue
+                        class="playlist-button"
+                        onclick="addCardToPlaylist(this)">
+                        🎵 Playlist
                     </button>
 
                 </div>
@@ -711,11 +706,11 @@
     </section>
 
 
-    <!-- FAVORITES -->
+    <!-- =====================================================
+         FAVORITES
+         ===================================================== -->
 
-    <section
-        class="favorites-section"
-        id="favorites">
+    <section class="favorites-section" id="favorites">
 
         <div class="section-header">
 
@@ -726,9 +721,7 @@
 
         </div>
 
-        <div
-            id="favoritesBox"
-            class="empty-box">
+        <div id="favoritesBox" class="empty-box">
 
             <div class="empty-icon">♡</div>
 
@@ -743,20 +736,17 @@
     </section>
 
 
-    <!-- QUEUE -->
+    <!-- =====================================================
+         QUEUE
+         ===================================================== -->
 
-    <section
-        class="queue-section"
-        id="queue">
+    <section class="queue-section" id="queue">
 
         <div class="queue-header">
 
             <div>
-
                 <span>UP NEXT</span>
-
                 <h2>♫ Your Queue</h2>
-
             </div>
 
             <button
@@ -811,19 +801,13 @@
      BOTTOM PLAYER
      ========================================================= -->
 
-<div
-    class="player"
-    id="player">
+<div class="player" id="player">
 
     <div class="player-song">
 
-        <div
-            class="mini-poster"
-            id="miniPoster">
+        <div class="mini-poster" id="miniPoster">
 
-            <div
-                class="mini-placeholder"
-                id="miniPlaceholder">
+            <div class="mini-placeholder" id="miniPlaceholder">
 
                 <div class="mini-glow"></div>
 
@@ -845,12 +829,7 @@
             <img
                 id="playerPoster"
                 src=""
-                alt="Current song"
-                onerror="
-                    this.style.display='none';
-                    document.getElementById('miniPlaceholder').style.display='grid';
-                "
-            >
+                alt="Current song">
 
         </div>
 
@@ -873,17 +852,11 @@
 
         <div class="controls">
 
-            <button
-                type="button"
-                onclick="shuffle()"
-                title="Shuffle">
+            <button type="button" onclick="shuffle()" title="Shuffle">
                 ⤨
             </button>
 
-            <button
-                type="button"
-                onclick="previousSong()"
-                title="Previous">
+            <button type="button" onclick="previousSong()" title="Previous">
                 |◀
             </button>
 
@@ -895,10 +868,7 @@
                 ▶
             </button>
 
-            <button
-                type="button"
-                onclick="nextSong()"
-                title="Next">
+            <button type="button" onclick="nextSong()" title="Next">
                 ▶|
             </button>
 
@@ -924,8 +894,7 @@
                 min="0"
                 max="100"
                 value="0"
-                step="0.1"
-            >
+                step="0.1">
 
             <span id="duration">
                 0:00
@@ -946,26 +915,19 @@
             min="0"
             max="1"
             step="0.01"
-            value="0.8"
-        >
+            value="0.8">
 
     </div>
-
 
     <audio id="audio"></audio>
 
 </div>
 
 
-<div
-    class="toast"
-    id="toast">
-</div>
+<div class="toast" id="toast"></div>
 
 
-<script
-    src="{{ url_for('static', filename='js/app.js') }}">
-</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>
 </html>
