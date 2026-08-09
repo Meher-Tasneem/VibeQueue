@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VibeQueue 🎧</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<!-- =========================================================
+     SIDEBAR
+     ========================================================= -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-content">
+
+        <div class="logo">
+            <div class="logo-icon">♫</div>
+
+            <div>
+                <h1>VibeQueue</h1>
+                <span>YOUR MUSIC SPACE</span>
+            </div>
+        </div>
+
+        <nav>
+
+            <a href="#home" class="nav-item active">
+                <span>⌂</span>
+                Home
+            </a>
+
+            <a href="#songs" class="nav-item">
+                <span>⌕</span>
+                Search
+            </a>
+
+            <a href="#favorites" class="nav-item">
+                <span>♡</span>
+                Favorites
+            </a>
+
+            <a href="#queue" class="nav-item">
+                <span>♫</span>
+                Queue
+            </a>
+
+        </nav>
+
+        <div class="library">
+
+            <div class="library-title">
+                <span>YOUR LIBRARY</span>
+
+                <button
+                    type="button"
+                    onclick="createPlaylist()">
+                    +
+                </button>
+            </div>
+
+            <div class="library-list">
+
+                <div class="library-item">
+                    🎵 My Playlist
+                </div>
+
+                <div class="library-item">
+                    🕘 Recently Played
+                </div>
+
+                <div class="library-item">
+                    ❤️ Liked Songs
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <div class="side-note">♫</div>
+
+        <span>
+            <b>Made for your vibe</b>
+            <small>Play • Queue • Repeat</small>
+        </span>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN CONTENT
+     ========================================================= -->
+
+<main class="main">
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div class="search">
+
+            <span>⌕</span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search songs or artists..."
+                autocomplete="off"
+            >
+
+        </div>
+
+        <button
+            type="button"
+            class="profile">
+            ◉ Profile
+        </button>
+
+    </header>
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-text">
+
+            <span class="welcome">
+                WELCOME TO YOUR MUSIC SPACE
+            </span>
+
+            <h2>
+                Feel it.
+                <em>Queue it.</em>
+                Live it.
+            </h2>
+
+            <p>
+                Your songs, your order, your vibe.
+                Build your queue and enjoy every beat.
+            </p>
+
+            <button
+                type="button"
+                class="start-button"
+                onclick="startListening()">
+
+                ▶ Start Listening
+
+            </button>
+
+        </div>
+
+
+        <div class="vinyl-area">
+
+            <div class="vinyl">
+                <div class="vinyl-center"></div>
+            </div>
+
+            <span class="music-note note1">♪</span>
+            <span class="music-note note2">♫</span>
+            <span class="music-note note3">♬</span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SONGS
+         ===================================================== -->
+
+    <section class="songs-section" id="songs">
+
+        <div class="section-header">
+
+            <div>
+                <span>DISCOVER</span>
+                <h2>Popular Songs</h2>
+            </div>
+
+            <small id="songCount">
+                8 songs
+            </small>
+
+        </div>
+
+
+        <div class="song-grid">
+
+
+            <!-- =================================================
+                 1. TUM HI HO
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Tum Hi Ho"
+                data-artist="Arijit Singh"
+                data-file="TumHiHo.mp3"
+                data-image="TumHiHo.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/TumHiHo.jpg') }}"
+                        alt="Tum Hi Ho"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Tum Hi Ho</h3>
+
+                    <p>Arijit Singh</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 2. SAIYAARA
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Saiyaara"
+                data-artist="Faheem Abdullah"
+                data-file="Saiyaara.mp3"
+                data-image="Saiyaara.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/Saiyaara.jpg') }}"
+                        alt="Saiyaara"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Saiyaara</h3>
+
+                    <p>Faheem Abdullah</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 3. ISHQ WALA LOVE
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Ishq Wala Love"
+                data-artist="Shekhar Ravjiani"
+                data-file="IshqWalaLove.mp3"
+                data-image="IshqWalaLove.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/IshqWalaLove.jpg') }}"
+                        alt="Ishq Wala Love"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Ishq Wala Love</h3>
+
+                    <p>Shekhar Ravjiani</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 4. APNA BANA LE
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Apna Bana Le"
+                data-artist="Arijit Singh"
+                data-file="ApnaBanaLe.mp3"
+                data-image="ApnaBanaLe.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/ApnaBanaLe.jpg') }}"
+                        alt="Apna Bana Le"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Apna Bana Le</h3>
+
+                    <p>Arijit Singh</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 5. SAPTA SAGARADAACHE ELLO
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Sapta Sagaradaache Ello"
+                data-artist="Kannada"
+                data-file="SaptaSagaradaacheEllo.mp3"
+                data-image="SaptaSagaradaacheEllo.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/SaptaSagaradaacheEllo.jpg') }}"
+                        alt="Sapta Sagaradaache Ello"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Sapta Sagaradaache Ello</h3>
+
+                    <p>Kannada</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 6. NAA EE SANJEGE
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Naa Ee Sanjege"
+                data-artist="Kannada"
+                data-file="NaaEeSanjege.mp3"
+                data-image="NaaEeSanjege.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/NaaEeSanjege.jpg') }}"
+                        alt="Naa Ee Sanjege"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Naa Ee Sanjege</h3>
+
+                    <p>Kannada</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 7. PERFECT
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Perfect"
+                data-artist="Ed Sheeran"
+                data-file="Perfect.mp3"
+                data-image="Perfect.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/Perfect.jpg') }}"
+                        alt="Perfect"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Perfect</h3>
+
+                    <p>Ed Sheeran</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 8. UNTIL I FOUND YOU
+                 ================================================= -->
+
+            <div
+                class="song-card"
+                data-song="Until I Found You"
+                data-artist="Stephen Sanchez"
+                data-file="UntilIFoundYou.mp3"
+                data-image="UntilIFoundYou.jpg">
+
+                <div class="poster">
+
+                    <img
+                        src="{{ url_for('static', filename='images/UntilIFoundYou.jpg') }}"
+                        alt="Until I Found You"
+                    >
+
+                    <div class="poster-gradient"></div>
+
+                    <button
+                        type="button"
+                        class="heart"
+                        onclick="favoriteSong(this)">
+                        ♡
+                    </button>
+
+                    <button
+                        type="button"
+                        class="poster-play"
+                        onclick="playCard(this)">
+                        ▶
+                    </button>
+
+                </div>
+
+                <div class="song-info">
+
+                    <h3>Until I Found You</h3>
+
+                    <p>Stephen Sanchez</p>
+
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        type="button"
+                        onclick="playCard(this)">
+                        ▶ Play
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="queueCard(this)">
+                        ＋ Queue
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FAVORITES
+         ===================================================== -->
+
+    <section
+        class="favorites-section"
+        id="favorites">
+
+        <div class="section-header">
+
+            <div>
+                <span>YOUR PICKS</span>
+                <h2>♡ Favorites</h2>
+            </div>
+
+        </div>
+
+        <div
+            id="favoritesBox"
+            class="empty-box">
+
+            <div class="empty-icon">♡</div>
+
+            <b>No favorite songs yet</b>
+
+            <small>
+                Tap ♡ on a song to add it here.
+            </small>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         QUEUE
+         ===================================================== -->
+
+    <section
+        class="queue-section"
+        id="queue">
+
+        <div class="queue-header">
+
+            <div>
+
+                <span>UP NEXT</span>
+
+                <h2>♫ Your Queue</h2>
+
+            </div>
+
+            <button
+                type="button"
+                class="clear-button"
+                onclick="clearQueue()">
+
+                🗑 Empty the Vibe
+
+            </button>
+
+        </div>
+
+        <div class="queue-panel">
+
+            <div class="queue-top">
+
+                <span id="queueStatus">
+                    0 songs waiting
+                </span>
+
+                <span>
+                    FIRST IN → FIRST OUT
+                </span>
+
+            </div>
+
+            <div id="queueBox">
+
+                <div class="empty-box">
+
+                    <div class="empty-icon">≋</div>
+
+                    <b>Your queue is empty</b>
+
+                    <small>
+                        Add songs above and they'll appear here.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     BOTTOM PLAYER
+     ========================================================= -->
+
+<div
+    class="player"
+    id="player">
+
+    <div class="player-song">
+
+        <div
+            class="mini-poster"
+            id="miniPoster">
+
+            <div
+                class="mini-placeholder"
+                id="miniPlaceholder">
+
+                <div class="mini-glow"></div>
+
+                <div class="mini-vinyl">
+
+                    <div class="mini-vinyl-line"></div>
+
+                    <div class="mini-vinyl-center">
+                        ♫
+                    </div>
+
+                </div>
+
+                <span class="mini-sparkle sparkle-one">✦</span>
+                <span class="mini-sparkle sparkle-two">♡</span>
+
+            </div>
+
+            <img
+                id="playerPoster"
+                src=""
+                alt="Current song"
+                onerror="
+                    this.style.display='none';
+                    document.getElementById('miniPlaceholder').style.display='grid';
+                "
+            >
+
+        </div>
+
+        <div class="player-song-text">
+
+            <b id="currentSong">
+                No song playing
+            </b>
+
+            <small id="currentArtist">
+                Select a song
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- PLAYER CONTROLS -->
+
+    <div class="player-middle">
+
+        <div class="controls">
+
+            <button
+                type="button"
+                onclick="shuffle()"
+                title="Shuffle">
+                ⤨
+            </button>
+
+            <button
+                type="button"
+                onclick="previousSong()"
+                title="Previous">
+                |◀
+            </button>
+
+            <button
+                type="button"
+                class="main-play"
+                id="mainPlay"
+                onclick="togglePlay()">
+                ▶
+            </button>
+
+            <button
+                type="button"
+                onclick="nextSong()"
+                title="Next">
+                ▶|
+            </button>
+
+            <button
+                type="button"
+                id="repeatButton"
+                onclick="repeatSong()"
+                title="Repeat">
+                ↻
+            </button>
+
+        </div>
+
+        <div class="progress">
+
+            <span id="currentTime">
+                0:00
+            </span>
+
+            <input
+                type="range"
+                id="progressBar"
+                min="0"
+                max="100"
+                value="0"
+                step="0.1"
+            >
+
+            <span id="duration">
+                0:00
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- VOLUME -->
+
+    <div class="volume">
+
+        <span id="volumeIcon">🔊</span>
+
+        <input
+            type="range"
+            id="volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.8"
+        >
+
+    </div>
+
+
+    <audio id="audio"></audio>
+
+</div>
+
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='js/app.js') }}">
+</script>
+
+</body>
+</html>
