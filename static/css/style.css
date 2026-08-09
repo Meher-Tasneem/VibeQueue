@@ -1,6 +1,6 @@
 /* =========================================================
    VIBEQUEUE — COMPLETE STYLE.CSS
-   DESKTOP + MOBILE SIDEBAR
+   DESKTOP + MOBILE FIX
    ========================================================= */
 
 * {
@@ -39,6 +39,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow-y: auto;
 }
 
 .sidebar-content {
@@ -155,7 +156,6 @@ nav {
     color: #99919e;
     font-size: 13px;
     cursor: pointer;
-    transition: .2s ease;
 }
 
 .library-item:hover {
@@ -253,7 +253,6 @@ nav {
     color: #aaa3af;
     padding: 11px 16px;
     border-radius: 12px;
-    cursor: pointer;
 }
 
 /* =========================================================
@@ -315,8 +314,6 @@ nav {
     color: white;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 10px 30px rgba(255,100,170,.18);
-    transition: .25s ease;
 }
 
 .start-button:hover {
@@ -457,12 +454,6 @@ nav {
 .song-card:hover {
     transform: translateY(-5px);
     border-color: rgba(255,140,190,.2);
-    box-shadow: 0 15px 40px rgba(0,0,0,.3);
-}
-
-.song-card.now-playing {
-    border-color: rgba(255,130,185,.45);
-    box-shadow: 0 0 30px rgba(255,90,170,.10);
 }
 
 .poster {
@@ -498,7 +489,6 @@ nav {
     border-radius: 50%;
     border: 0;
     background: rgba(0,0,0,.55);
-    backdrop-filter: blur(10px);
     color: #fff;
     font-size: 20px;
     cursor: pointer;
@@ -507,16 +497,6 @@ nav {
 
 .heart.liked {
     color: #ff6d9f;
-}
-
-.heart-pop {
-    animation: heartPop .45s ease;
-}
-
-@keyframes heartPop {
-    50% {
-        transform: scale(1.35);
-    }
 }
 
 .poster-play {
@@ -570,11 +550,6 @@ nav {
     border-radius: 9px;
     font-size: 10px;
     cursor: pointer;
-}
-
-.card-buttons button:hover {
-    background: rgba(255,130,185,.12);
-    color: white;
 }
 
 /* =========================================================
@@ -638,7 +613,6 @@ nav {
     color: #77717c;
     font-size: 10px;
     letter-spacing: 1px;
-    border-bottom: 1px solid rgba(255,255,255,.05);
 }
 
 .queue-song {
@@ -646,54 +620,10 @@ nav {
     align-items: center;
     gap: 16px;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(255,255,255,.04);
-}
-
-.queue-number {
-    color: #77717c;
-    font-size: 11px;
-}
-
-.queue-song b {
-    display: block;
-    font-size: 13px;
-}
-
-.queue-song small {
-    display: block;
-    margin-top: 4px;
-    color: #716b76;
-    font-size: 10px;
-}
-
-.queue-wave {
-    margin-left: auto;
-    display: flex;
-    gap: 3px;
-    align-items: center;
-}
-
-.queue-wave i {
-    width: 3px;
-    height: 13px;
-    border-radius: 5px;
-    background: #ff8cbd;
-}
-
-.queue-wave i:nth-child(2) {
-    height: 21px;
-}
-
-.queue-wave i:nth-child(3) {
-    height: 9px;
-}
-
-.queue-wave i:nth-child(4) {
-    height: 17px;
 }
 
 /* =========================================================
-   BOTTOM PLAYER
+   PLAYER
    ========================================================= */
 
 .player {
@@ -747,7 +677,6 @@ nav {
     height: 100%;
     display: grid;
     place-items: center;
-    position: relative;
 }
 
 .mini-vinyl {
@@ -788,10 +717,6 @@ nav {
     font-size: 10px;
 }
 
-.player-middle {
-    min-width: 0;
-}
-
 .controls {
     display: flex;
     justify-content: center;
@@ -807,17 +732,12 @@ nav {
     cursor: pointer;
 }
 
-.controls button:hover {
-    color: white;
-}
-
 .controls .main-play {
     width: 42px;
     height: 42px;
     border-radius: 50%;
     background: white;
     color: #0b0b0e;
-    font-size: 14px;
 }
 
 .progress {
@@ -834,12 +754,12 @@ nav {
     text-align: center;
 }
 
-input[type="range"] {
-    accent-color: #ff8fbd;
-}
-
 .progress input {
     flex: 1;
+}
+
+input[type="range"] {
+    accent-color: #ff8fbd;
 }
 
 .volume {
@@ -870,7 +790,6 @@ input[type="range"] {
     background: #fff;
     color: #111;
     font-size: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,.4);
     transition: .25s ease;
 }
 
@@ -906,7 +825,6 @@ input[type="range"] {
     border-radius: 24px;
     background: #111016;
     border: 1px solid rgba(255,255,255,.08);
-    box-shadow: 0 30px 80px rgba(0,0,0,.6);
 }
 
 .library-modal-header {
@@ -914,28 +832,6 @@ input[type="range"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,.06);
-}
-
-.library-modal-header h3 {
-    font-size: 20px;
-}
-
-.library-modal-header small {
-    display: block;
-    margin-top: 5px;
-    color: #77717c;
-}
-
-.library-close {
-    width: 38px;
-    height: 38px;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,.06);
-    color: white;
-    font-size: 25px;
-    cursor: pointer;
 }
 
 .library-modal-body {
@@ -944,75 +840,8 @@ input[type="range"] {
     overflow-y: auto;
 }
 
-.library-song {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding: 10px;
-    border-radius: 13px;
-    margin-bottom: 8px;
-    background: rgba(255,255,255,.035);
-}
-
-.library-song img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.library-song-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.library-song-info b {
-    display: block;
-    font-size: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.library-song-info small {
-    display: block;
-    margin-top: 5px;
-    color: #77717c;
-    font-size: 10px;
-}
-
-.library-play {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-    border: 0;
-    border-radius: 50%;
-    background: white;
-    color: #111;
-    cursor: pointer;
-}
-
-.library-empty {
-    padding: 60px 20px;
-    text-align: center;
-}
-
-.library-empty > div {
-    font-size: 38px;
-    color: #ff91bd;
-    margin-bottom: 12px;
-}
-
-.library-empty p {
-    color: #77717c;
-    font-size: 12px;
-    margin-top: 7px;
-}
-
 /* =========================================================
-   MOBILE NAV
-   =========================================================
-   HIDDEN because sidebar remains visible on phone.
+   MOBILE NAV HIDDEN
    ========================================================= */
 
 .mobile-nav {
@@ -1023,7 +852,7 @@ input[type="range"] {
    TABLET
    ========================================================= */
 
-@media (max-width: 1100px) {
+@media (max-width:1100px) {
 
     .sidebar {
         width: 210px;
@@ -1042,63 +871,58 @@ input[type="range"] {
     .song-grid {
         grid-template-columns: repeat(3,1fr);
     }
-
-    .vinyl-area {
-        right: 2%;
-        transform: scale(.8);
-    }
 }
 
 /* =========================================================
-   PHONE / SMALL TABLET
+   PHONE
    ========================================================= */
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
 
-    /* KEEP SIDEBAR ON LEFT */
+    /* SIDEBAR */
 
     .sidebar {
-        display: flex;
-        width: 175px;
+        width: 115px;
         overflow-y: auto;
-        overflow-x: hidden;
     }
 
     .sidebar-content {
-        padding: 20px 10px;
-        width: 100%;
+        padding: 16px 7px;
     }
 
     .logo {
-        gap: 8px;
-        margin-bottom: 25px;
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+        margin-bottom: 20px;
     }
 
     .logo-icon {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         border-radius: 11px;
         font-size: 20px;
-        flex-shrink: 0;
     }
 
     .logo h1 {
-        font-size: 16px;
+        font-size: 12px;
     }
 
     .logo span {
-        font-size: 6px;
-        letter-spacing: 1px;
+        display: none;
     }
 
     nav {
-        gap: 4px;
+        gap: 3px;
     }
 
     .nav-item {
-        gap: 9px;
-        padding: 11px 9px;
-        font-size: 12px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+        padding: 9px 4px;
+        font-size: 9px;
+        text-align: center;
     }
 
     .nav-item span {
@@ -1106,70 +930,72 @@ input[type="range"] {
     }
 
     .library {
-        margin-top: 25px;
+        margin-top: 20px;
     }
 
     .library-title {
-        padding: 0 7px 9px;
+        padding: 0 3px 7px;
     }
 
     .library-title span {
-        font-size: 7px;
+        font-size: 6px;
         letter-spacing: 1px;
     }
 
     .library-title button {
-        width: 22px;
-        height: 22px;
-        font-size: 15px;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    .library-list {
+        gap: 3px;
     }
 
     .library-item {
-        padding: 10px 7px;
-        font-size: 11px;
+        padding: 8px 4px;
+        font-size: 8px;
+        text-align: center;
     }
 
     .sidebar-bottom {
-        margin: 10px;
-        padding: 10px;
-        gap: 7px;
+        margin: 6px;
+        padding: 7px 4px;
+        justify-content: center;
     }
 
     .side-note {
-        font-size: 17px;
+        font-size: 16px;
     }
 
-    .sidebar-bottom b {
-        font-size: 8px;
+    .sidebar-bottom span {
+        display: none;
     }
 
-    .sidebar-bottom small {
-        font-size: 7px;
-    }
-
-    /* MAIN STAYS BESIDE SIDEBAR */
+    /* MAIN */
 
     .main {
-        margin-left: 175px;
-        padding: 0 10px 180px;
+        margin-left: 115px;
+        padding: 0 9px 165px;
+        width: calc(100% - 115px);
     }
 
     .topbar {
-        height: 68px;
+        height: 62px;
     }
 
     .search {
         width: 100%;
-        height: 40px;
-        padding: 0 10px;
+        height: 38px;
+        padding: 0 9px;
     }
 
     .search span {
-        font-size: 18px;
+        font-size: 17px;
     }
 
     .search input {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     .profile {
@@ -1179,308 +1005,51 @@ input[type="range"] {
     /* HERO */
 
     .hero {
-        min-height: 380px;
-        padding: 27px 18px;
-        border-radius: 20px;
+        min-height: 330px;
+        padding: 25px 15px;
+        border-radius: 18px;
         align-items: flex-start;
     }
 
     .welcome {
-        font-size: 7px;
-        letter-spacing: 1.5px;
+        font-size: 6px;
+        letter-spacing: 1px;
     }
 
     .hero h2 {
-        font-size: 34px;
-        letter-spacing: -2px;
-        line-height: 1;
+        font-size: 28px;
+        letter-spacing: -1.5px;
     }
 
     .hero p {
-        font-size: 11px;
+        font-size: 9px;
         line-height: 1.5;
-        margin: 15px 0 20px;
+        margin: 13px 0 18px;
     }
 
     .start-button {
-        padding: 11px 14px;
-        font-size: 10px;
+        padding: 9px 12px;
+        font-size: 8px;
     }
 
     .vinyl-area {
-        right: -105px;
-        bottom: -90px;
-        transform: scale(.58);
+        right: -125px;
+        bottom: -105px;
+        transform: scale(.48);
         opacity: .7;
     }
 
-    /* SONGS */
-
-    .songs-section,
-    .favorites-section,
-    .queue-section {
-        padding-top: 35px;
-    }
-
-    .section-header,
-    .queue-header {
-        margin-bottom: 15px;
-    }
-
-    .section-header h2,
-    .queue-header h2 {
-        font-size: 20px;
-    }
-
-    .song-grid {
-        grid-template-columns: repeat(2, minmax(0,1fr));
-        gap: 9px;
-    }
-
-    .song-card {
-        padding: 6px;
-        border-radius: 14px;
-    }
-
-    .poster {
-        border-radius: 11px;
-    }
-
-    .poster-play {
-        opacity: 1;
-        width: 36px;
-        height: 36px;
-        bottom: 8px;
-    }
-
-    .heart {
-        width: 29px;
-        height: 29px;
-        font-size: 16px;
-        top: 6px;
-        right: 6px;
-    }
-
-    .song-info {
-        padding: 9px 2px 6px;
-    }
-
-    .song-info h3 {
-        font-size: 10px;
-    }
-
-    .song-info p {
-        font-size: 8px;
-        margin-top: 3px;
-    }
-
-    .card-buttons {
-        gap: 3px;
-    }
-
-    .card-buttons button {
-        padding: 7px 2px;
-        font-size: 7px;
-    }
-
-    /* QUEUE */
-
-    .queue-top {
-        padding: 12px;
-        font-size: 7px;
-    }
-
-    .queue-song {
-        padding: 12px;
-        gap: 9px;
-    }
-
-    .queue-song b {
-        font-size: 10px;
-    }
-
-    .queue-song small {
-        font-size: 8px;
-    }
-
-    .clear-button {
-        font-size: 8px;
-        padding: 7px 9px;
-    }
-
-    /* PLAYER */
-
-    .player {
-        left: 182px;
-        right: 7px;
-        bottom: 8px;
-        width: auto;
-        grid-template-columns: 1fr;
-        gap: 4px;
-        min-height: 70px;
-        padding: 7px 10px;
-        border-radius: 15px;
-    }
-
-    .mini-poster {
-        width: 44px;
-        height: 44px;
-    }
-
-    .player-song-text b {
-        font-size: 10px;
-    }
-
-    .player-song-text small {
-        font-size: 8px;
-    }
-
-    .player-middle {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-    }
-
-    .controls {
-        gap: 3px;
-    }
-
-    .controls button:not(.main-play) {
-        display: none;
-    }
-
-    .controls .main-play {
-        width: 34px;
-        height: 34px;
-        font-size: 11px;
-    }
-
-    .progress {
-        position: absolute;
-        left: 10px;
-        right: 10px;
-        bottom: 4px;
-        margin-top: 0;
-    }
-
-    .progress span {
-        font-size: 7px;
-    }
-
-    .volume {
-        display: none;
-    }
-
-    .player-song-text {
-        padding-right: 45px;
-    }
-
-    .toast {
-        bottom: 90px;
-    }
-}
-
-/* =========================================================
-   SMALL PHONE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-    .sidebar {
-        width: 155px;
-    }
-
-    .sidebar-content {
-        padding: 18px 8px;
-    }
-
-    .logo h1 {
-        font-size: 14px;
-    }
-
-    .logo span {
-        font-size: 5px;
-    }
-
-    .logo-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-    }
-
-    .nav-item {
-        padding: 10px 7px;
-        font-size: 10px;
-        gap: 7px;
-    }
-
-    .nav-item span {
-        font-size: 15px;
-    }
-
-    .library-item {
-        font-size: 9px;
-        padding: 9px 6px;
-    }
-
-    .library-title span {
-        font-size: 6px;
-    }
-
-    .sidebar-bottom {
-        margin: 7px;
-        padding: 8px;
-    }
-
-    .sidebar-bottom b {
-        font-size: 7px;
-    }
-
-    .sidebar-bottom small {
-        font-size: 6px;
-    }
-
-    .main {
-        margin-left: 155px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-bottom: 170px;
-    }
-
-    .topbar {
-        height: 62px;
-    }
-
-    .hero {
-        min-height: 350px;
-        padding: 24px 15px;
-        border-radius: 18px;
-    }
-
-    .hero h2 {
-        font-size: 29px;
-    }
-
-    .hero p {
-        font-size: 9px;
-        max-width: 95%;
-    }
-
-    .start-button {
-        padding: 9px 11px;
-        font-size: 8px;
-    }
-
-    .vinyl-area {
-        right: -115px;
-        bottom: -105px;
-        transform: scale(.48);
-    }
+    /* SECTIONS */
 
     .songs-section,
     .favorites-section,
     .queue-section {
         padding-top: 30px;
+    }
+
+    .section-header,
+    .queue-header {
+        margin-bottom: 13px;
     }
 
     .section-header h2,
@@ -1490,10 +1059,17 @@ input[type="range"] {
 
     .section-header span,
     .queue-header span {
+        font-size: 6px;
+    }
+
+    .section-header > small {
         font-size: 7px;
     }
 
+    /* SONG GRID */
+
     .song-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
         gap: 7px;
     }
 
@@ -1506,37 +1082,98 @@ input[type="range"] {
         border-radius: 9px;
     }
 
+    .poster-play {
+        opacity: 1;
+        width: 31px;
+        height: 31px;
+        bottom: 7px;
+        font-size: 10px;
+    }
+
+    .heart {
+        width: 25px;
+        height: 25px;
+        top: 5px;
+        right: 5px;
+        font-size: 14px;
+    }
+
+    .song-info {
+        padding: 8px 2px 5px;
+    }
+
     .song-info h3 {
         font-size: 8px;
     }
 
     .song-info p {
         font-size: 7px;
+        margin-top: 3px;
+    }
+
+    .card-buttons {
+        gap: 3px;
     }
 
     .card-buttons button {
-        font-size: 6px;
         padding: 6px 1px;
+        font-size: 6px;
     }
 
-    .heart {
-        width: 25px;
-        height: 25px;
-        font-size: 14px;
+    /* FAVORITES */
+
+    .empty-box {
+        min-height: 130px;
     }
 
-    .poster-play {
-        width: 32px;
-        height: 32px;
-        font-size: 11px;
+    .empty-icon {
+        font-size: 27px;
     }
+
+    .empty-box b {
+        font-size: 10px;
+    }
+
+    .empty-box small {
+        font-size: 8px;
+    }
+
+    /* QUEUE */
+
+    .queue-top {
+        padding: 10px;
+        font-size: 6px;
+    }
+
+    .queue-song {
+        padding: 10px;
+        gap: 7px;
+    }
+
+    .queue-song b {
+        font-size: 9px;
+    }
+
+    .queue-song small {
+        font-size: 7px;
+    }
+
+    .clear-button {
+        font-size: 7px;
+        padding: 6px 8px;
+    }
+
+    /* PLAYER */
 
     .player {
-        left: 162px;
-        right: 5px;
+        left: 122px;
+        right: 6px;
         bottom: 6px;
-        min-height: 64px;
+        min-height: 62px;
         padding: 6px 8px;
+        border-radius: 14px;
+        grid-template-columns: 1fr;
+        gap: 2px;
     }
 
     .mini-poster {
@@ -1552,62 +1189,183 @@ input[type="range"] {
         font-size: 7px;
     }
 
+    .player-middle {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+    }
+
+    .controls {
+        gap: 2px;
+    }
+
+    .controls button:not(.main-play) {
+        display: none;
+    }
+
     .controls .main-play {
         width: 31px;
         height: 31px;
+        font-size: 10px;
+    }
+
+    .progress {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 3px;
+        margin: 0;
+    }
+
+    .progress span {
+        font-size: 6px;
+        min-width: 20px;
+    }
+
+    .volume {
+        display: none;
+    }
+
+    .player-song-text {
+        padding-right: 40px;
+    }
+
+    .toast {
+        bottom: 82px;
+        font-size: 9px;
     }
 }
 
 /* =========================================================
-   VERY SMALL PHONES
+   SMALL PHONE
    ========================================================= */
 
-@media (max-width: 380px) {
+@media (max-width:600px) {
 
     .sidebar {
-        width: 140px;
+        width: 105px;
     }
 
     .main {
-        margin-left: 140px;
-    }
-
-    .logo {
-        margin-bottom: 20px;
-    }
-
-    .logo h1 {
-        font-size: 12px;
-    }
-
-    .logo-icon {
-        width: 29px;
-        height: 29px;
-        font-size: 16px;
+        margin-left: 105px;
+        width: calc(100% - 105px);
+        padding-left: 6px;
+        padding-right: 6px;
     }
 
     .nav-item {
-        font-size: 9px;
-        padding: 9px 5px;
-    }
-
-    .library-item {
         font-size: 8px;
     }
 
+    .nav-item span {
+        font-size: 15px;
+    }
+
+    .library-item {
+        font-size: 7px;
+    }
+
+    .logo-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+
+    .logo h1 {
+        font-size: 11px;
+    }
+
     .hero {
-        min-height: 330px;
+        min-height: 315px;
+        padding: 22px 12px;
     }
 
     .hero h2 {
-        font-size: 26px;
+        font-size: 25px;
+    }
+
+    .hero p {
+        font-size: 8px;
     }
 
     .song-grid {
         gap: 5px;
     }
 
+    .song-card {
+        padding: 4px;
+    }
+
+    .song-info h3 {
+        font-size: 7px;
+    }
+
+    .song-info p {
+        font-size: 6px;
+    }
+
+    .card-buttons button {
+        font-size: 5.5px;
+        padding: 5px 1px;
+    }
+
     .player {
-        left: 147px;
+        left: 112px;
+        right: 5px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONE
+   ========================================================= */
+
+@media (max-width:380px) {
+
+    .sidebar {
+        width: 92px;
+    }
+
+    .main {
+        margin-left: 92px;
+        width: calc(100% - 92px);
+    }
+
+    .logo-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .logo h1 {
+        font-size: 10px;
+    }
+
+    .nav-item {
+        font-size: 7px;
+        padding: 8px 3px;
+    }
+
+    .nav-item span {
+        font-size: 14px;
+    }
+
+    .library-title span {
+        font-size: 5px;
+    }
+
+    .library-item {
+        font-size: 6.5px;
+    }
+
+    .hero {
+        min-height: 300px;
+    }
+
+    .hero h2 {
+        font-size: 22px;
+    }
+
+    .player {
+        left: 99px;
     }
 }
