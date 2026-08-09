@@ -2,16 +2,323 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>VibeQueue 🎧</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <!-- =====================================================
+         LIBRARY DESIGN — FINAL
+         ===================================================== -->
+
+    <style>
+
+        /* =================================================
+           ATTRACTIVE SIDEBAR LIBRARY
+           ================================================= */
+
+        .library {
+            margin-top: 28px !important;
+        }
+
+        .library-title {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            margin-bottom: 13px !important;
+        }
+
+        .library-title span {
+            font-size: 10px !important;
+            font-weight: 800 !important;
+            letter-spacing: 1.5px !important;
+            color: #8d92a3 !important;
+        }
+
+        .library-title button {
+            width: 28px !important;
+            height: 28px !important;
+            border: 0 !important;
+            border-radius: 9px !important;
+            background: linear-gradient(
+                135deg,
+                #a98cff,
+                #ff78a8
+            ) !important;
+            color: white !important;
+            font-size: 20px !important;
+            line-height: 1 !important;
+            cursor: pointer !important;
+            transition: .25s ease !important;
+            box-shadow:
+                0 5px 15px rgba(169,140,255,.22) !important;
+        }
+
+        .library-title button:hover {
+            transform: scale(1.1) rotate(90deg) !important;
+        }
+
+
+        /* LIBRARY LIST */
+
+        .library-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 9px !important;
+        }
+
+
+        /* LIBRARY CARD */
+
+        .library-card {
+            position: relative !important;
+
+            display: flex !important;
+            align-items: center !important;
+
+            gap: 11px !important;
+
+            width: 100% !important;
+            min-height: 62px !important;
+
+            padding: 10px 11px !important;
+
+            box-sizing: border-box !important;
+
+            border: 1px solid rgba(255,255,255,.06) !important;
+
+            border-radius: 15px !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255,255,255,.055),
+                    rgba(255,255,255,.018)
+                ) !important;
+
+            cursor: pointer !important;
+
+            overflow: hidden !important;
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease,
+                background .25s ease,
+                box-shadow .25s ease !important;
+        }
+
+
+        /* SOFT GLOW */
+
+        .library-card::before {
+            content: "" !important;
+
+            position: absolute !important;
+
+            width: 65px !important;
+            height: 65px !important;
+
+            border-radius: 50% !important;
+
+            left: -28px !important;
+            top: -25px !important;
+
+            opacity: .13 !important;
+
+            filter: blur(15px) !important;
+
+            pointer-events: none !important;
+        }
+
+
+        .playlist-card::before {
+            background: #a98cff !important;
+        }
+
+        .recent-card::before {
+            background: #55d6ff !important;
+        }
+
+        .liked-card::before {
+            background: #ff6f9d !important;
+        }
+
+
+        /* HOVER */
+
+        .library-card:hover {
+            transform: translateX(4px) !important;
+
+            border-color:
+                rgba(169,140,255,.35) !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(169,140,255,.12),
+                    rgba(255,255,255,.035)
+                ) !important;
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,.18) !important;
+        }
+
+
+        /* ICON */
+
+        .library-card-icon {
+            width: 38px !important;
+            height: 38px !important;
+
+            min-width: 38px !important;
+
+            display: flex !important;
+
+            align-items: center !important;
+            justify-content: center !important;
+
+            border-radius: 12px !important;
+
+            font-size: 18px !important;
+
+            background:
+                rgba(255,255,255,.07) !important;
+
+            box-shadow:
+                inset 0 0 0 1px
+                rgba(255,255,255,.04) !important;
+
+            transition: .25s ease !important;
+        }
+
+
+        .library-card:hover .library-card-icon {
+            transform: scale(1.08) !important;
+        }
+
+
+        /* TEXT */
+
+        .library-card-info {
+            flex: 1 !important;
+            min-width: 0 !important;
+        }
+
+
+        .library-card-info b {
+            display: block !important;
+
+            color: #f4f4f8 !important;
+
+            font-size: 12px !important;
+
+            font-weight: 700 !important;
+
+            white-space: nowrap !important;
+
+            overflow: hidden !important;
+
+            text-overflow: ellipsis !important;
+        }
+
+
+        .library-card-info small {
+            display: block !important;
+
+            margin-top: 4px !important;
+
+            color: #777d8e !important;
+
+            font-size: 9px !important;
+
+            white-space: nowrap !important;
+
+            overflow: hidden !important;
+
+            text-overflow: ellipsis !important;
+        }
+
+
+        /* ARROW */
+
+        .library-card-arrow {
+            color: #73798a !important;
+
+            font-size: 22px !important;
+
+            line-height: 1 !important;
+
+            transition: .25s ease !important;
+        }
+
+
+        .library-card:hover .library-card-arrow {
+            color: #b39aff !important;
+
+            transform: translateX(3px) !important;
+        }
+
+
+        /* INDIVIDUAL COLORS */
+
+        .playlist-card:hover {
+            border-color:
+                rgba(169,140,255,.45) !important;
+        }
+
+        .recent-card:hover {
+            border-color:
+                rgba(85,214,255,.35) !important;
+        }
+
+        .liked-card:hover {
+            border-color:
+                rgba(255,111,157,.4) !important;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .library-card {
+                min-height: 58px !important;
+                padding: 9px !important;
+            }
+
+            .library-card-icon {
+                width: 35px !important;
+                height: 35px !important;
+                min-width: 35px !important;
+                font-size: 16px !important;
+            }
+
+            .library-card-info b {
+                font-size: 11px !important;
+            }
+
+            .library-card-info small {
+                font-size: 8px !important;
+            }
+        }
+
+    </style>
+
 </head>
 
+
 <body>
+
 
 <!-- =========================================================
      SIDEBAR
@@ -22,53 +329,177 @@
     <div class="sidebar-content">
 
         <div class="logo">
-            <div class="logo-icon">♫</div>
-            <div>
-                <h1>VibeQueue</h1>
-                <span>YOUR MUSIC SPACE</span>
+
+            <div class="logo-icon">
+                ♫
             </div>
+
+            <div>
+
+                <h1>VibeQueue</h1>
+
+                <span>
+                    YOUR MUSIC SPACE
+                </span>
+
+            </div>
+
         </div>
 
+
         <nav>
-            <a href="#home" class="nav-item active">
-                <span>⌂</span> Home
+
+            <a
+                href="#home"
+                class="nav-item active"
+            >
+                <span>⌂</span>
+                Home
             </a>
 
-            <a href="#songs" class="nav-item">
-                <span>⌕</span> Search
+
+            <a
+                href="#songs"
+                class="nav-item"
+            >
+                <span>⌕</span>
+                Search
             </a>
 
-            <a href="#favorites" class="nav-item">
-                <span>♡</span> Favorites
+
+            <a
+                href="#favorites"
+                class="nav-item"
+            >
+                <span>♡</span>
+                Favorites
             </a>
 
-            <a href="#queue" class="nav-item">
-                <span>♫</span> Queue
+
+            <a
+                href="#queue"
+                class="nav-item"
+            >
+                <span>♫</span>
+                Queue
             </a>
+
         </nav>
+
+
+        <!-- =================================================
+             YOUR LIBRARY
+             ================================================= -->
 
         <div class="library">
 
             <div class="library-title">
-                <span>YOUR LIBRARY</span>
 
-                <button type="button" onclick="createPlaylist()">
+                <span>
+                    YOUR LIBRARY
+                </span>
+
+                <button
+                    type="button"
+                    onclick="createPlaylist()"
+                    title="Open My Playlist"
+                >
                     +
                 </button>
+
             </div>
+
 
             <div class="library-list">
 
-                <div class="library-item">
-                    🎵 My Playlist
+
+                <!-- MY PLAYLIST -->
+
+                <div
+                    class="library-item library-card playlist-card"
+                    title="Open My Playlist"
+                >
+
+                    <div class="library-card-icon">
+                        🎵
+                    </div>
+
+                    <div class="library-card-info">
+
+                        <b>
+                            My Playlist
+                        </b>
+
+                        <small>
+                            Your personal mix
+                        </small>
+
+                    </div>
+
+                    <span class="library-card-arrow">
+                        ›
+                    </span>
+
                 </div>
 
-                <div class="library-item">
-                    🕘 Recently Played
+
+                <!-- RECENTLY PLAYED -->
+
+                <div
+                    class="library-item library-card recent-card"
+                    title="Open Recently Played"
+                >
+
+                    <div class="library-card-icon">
+                        🕒
+                    </div>
+
+                    <div class="library-card-info">
+
+                        <b>
+                            Recently Played
+                        </b>
+
+                        <small>
+                            Your latest vibes
+                        </small>
+
+                    </div>
+
+                    <span class="library-card-arrow">
+                        ›
+                    </span>
+
                 </div>
 
-                <div class="library-item">
-                    ❤️ Liked Songs
+
+                <!-- LIKED SONGS -->
+
+                <div
+                    class="library-item library-card liked-card"
+                    title="Open Liked Songs"
+                >
+
+                    <div class="library-card-icon">
+                        ❤️
+                    </div>
+
+                    <div class="library-card-info">
+
+                        <b>
+                            Liked Songs
+                        </b>
+
+                        <small>
+                            Songs you love
+                        </small>
+
+                    </div>
+
+                    <span class="library-card-arrow">
+                        ›
+                    </span>
+
                 </div>
 
             </div>
@@ -77,18 +508,29 @@
 
     </div>
 
+
     <div class="sidebar-bottom">
 
-        <div class="side-note">♫</div>
+        <div class="side-note">
+            ♫
+        </div>
 
         <span>
-            <b>Made for your vibe</b>
-            <small>Play • Queue • Repeat</small>
+
+            <b>
+                Made for your vibe
+            </b>
+
+            <small>
+                Play • Queue • Repeat
+            </small>
+
         </span>
 
     </div>
 
 </aside>
+
 
 
 <!-- =========================================================
@@ -117,12 +559,16 @@
         Queue
     </a>
 
-    <button type="button" onclick="openLibrary()">
+    <button
+        type="button"
+        onclick="openLibrary()"
+    >
         <span>🎵</span>
         Library
     </button>
 
 </div>
+
 
 
 <!-- =========================================================
@@ -131,30 +577,46 @@
 
 <main class="main">
 
+
+    <!-- TOP BAR -->
+
     <header class="topbar">
 
         <div class="search">
-            <span>⌕</span>
+
+            <span>
+                ⌕
+            </span>
 
             <input
                 type="text"
                 id="searchInput"
                 placeholder="Search songs or artists..."
-                autocomplete="off">
+                autocomplete="off"
+            >
+
         </div>
 
-        <button type="button" class="profile">
+
+        <button
+            type="button"
+            class="profile"
+        >
             ◉ Profile
         </button>
 
     </header>
 
 
+
     <!-- =====================================================
          HERO
          ===================================================== -->
 
-    <section class="hero" id="home">
+    <section
+        class="hero"
+        id="home"
+    >
 
         <div class="hero-text">
 
@@ -176,40 +638,61 @@
             <button
                 type="button"
                 class="start-button"
-                onclick="startListening()">
-
+                onclick="startListening()"
+            >
                 ▶ Start Listening
-
             </button>
 
         </div>
 
+
         <div class="vinyl-area">
 
             <div class="vinyl">
+
                 <div class="vinyl-center"></div>
+
             </div>
 
-            <span class="music-note note1">♪</span>
-            <span class="music-note note2">♫</span>
-            <span class="music-note note3">♬</span>
+            <span class="music-note note1">
+                ♪
+            </span>
+
+            <span class="music-note note2">
+                ♫
+            </span>
+
+            <span class="music-note note3">
+                ♬
+            </span>
 
         </div>
 
     </section>
 
 
+
     <!-- =====================================================
          SONGS
          ===================================================== -->
 
-    <section class="songs-section" id="songs">
+    <section
+        class="songs-section"
+        id="songs"
+    >
 
         <div class="section-header">
 
             <div>
-                <span>DISCOVER</span>
-                <h2>Popular Songs</h2>
+
+                <span>
+                    DISCOVER
+                </span>
+
+                <h2>
+                    Popular Songs
+                </h2>
+
             </div>
 
             <small id="songCount">
@@ -222,59 +705,77 @@
         <div class="song-grid">
 
 
-            <!-- 1. TUM HI HO -->
+            <!-- SONG 1 -->
 
             <div
                 class="song-card"
                 data-song="Tum Hi Ho"
                 data-artist="Arijit Singh"
                 data-file="TumHiHo.mp3"
-                data-image="TumHiHo.jpg">
+                data-image="TumHiHo.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/TumHiHo.jpg') }}"
-                        alt="Tum Hi Ho">
+                        alt="Tum Hi Ho"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Tum Hi Ho</h3>
-                    <p>Arijit Singh</p>
+
+                    <h3>
+                        Tum Hi Ho
+                    </h3>
+
+                    <p>
+                        Arijit Singh
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -282,59 +783,78 @@
             </div>
 
 
-            <!-- 2. SAIYAARA -->
+
+            <!-- SONG 2 -->
 
             <div
                 class="song-card"
                 data-song="Saiyaara"
                 data-artist="Faheem Abdullah"
                 data-file="Saiyaara.mp3"
-                data-image="Saiyaara.jpg">
+                data-image="Saiyaara.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/Saiyaara.jpg') }}"
-                        alt="Saiyaara">
+                        alt="Saiyaara"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Saiyaara</h3>
-                    <p>Faheem Abdullah</p>
+
+                    <h3>
+                        Saiyaara
+                    </h3>
+
+                    <p>
+                        Faheem Abdullah
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -342,59 +862,78 @@
             </div>
 
 
-            <!-- 3. ISHQ WALA LOVE -->
+
+            <!-- SONG 3 -->
 
             <div
                 class="song-card"
                 data-song="Ishq Wala Love"
                 data-artist="Shekhar Ravjiani"
                 data-file="IshqWalaLove.mp3"
-                data-image="IshqWalaLove.jpg">
+                data-image="IshqWalaLove.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/IshqWalaLove.jpg') }}"
-                        alt="Ishq Wala Love">
+                        alt="Ishq Wala Love"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Ishq Wala Love</h3>
-                    <p>Shekhar Ravjiani</p>
+
+                    <h3>
+                        Ishq Wala Love
+                    </h3>
+
+                    <p>
+                        Shekhar Ravjiani
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -402,59 +941,78 @@
             </div>
 
 
-            <!-- 4. APNA BANA LE -->
+
+            <!-- SONG 4 -->
 
             <div
                 class="song-card"
                 data-song="Apna Bana Le"
                 data-artist="Arijit Singh"
                 data-file="ApnaBanaLe.mp3"
-                data-image="ApnaBanaLe.jpg">
+                data-image="ApnaBanaLe.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/ApnaBanaLe.jpg') }}"
-                        alt="Apna Bana Le">
+                        alt="Apna Bana Le"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Apna Bana Le</h3>
-                    <p>Arijit Singh</p>
+
+                    <h3>
+                        Apna Bana Le
+                    </h3>
+
+                    <p>
+                        Arijit Singh
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -462,59 +1020,78 @@
             </div>
 
 
-            <!-- 5. SAPTA SAGARADAACHE ELLO -->
+
+            <!-- SONG 5 -->
 
             <div
                 class="song-card"
                 data-song="Sapta Sagaradaache Ello"
                 data-artist="Kapil Kapilan"
                 data-file="SaptaSagaradaacheEllo.mp3"
-                data-image="SaptaSagaradaacheEllo.jpg">
+                data-image="SaptaSagaradaacheEllo.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/SaptaSagaradaacheEllo.jpg') }}"
-                        alt="Sapta Sagaradaache Ello">
+                        alt="Sapta Sagaradaache Ello"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Sapta Sagaradaache Ello</h3>
-                    <p>Kapil Kapilan</p>
+
+                    <h3>
+                        Sapta Sagaradaache Ello
+                    </h3>
+
+                    <p>
+                        Kapil Kapilan
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -522,59 +1099,78 @@
             </div>
 
 
-            <!-- 6. NAA EE SANJEGE -->
+
+            <!-- SONG 6 -->
 
             <div
                 class="song-card"
                 data-song="Naa Ee Sanjege"
                 data-artist="Siddhanth"
                 data-file="NaaEeSanjege.mp3"
-                data-image="NaaEeSanjege.jpg">
+                data-image="NaaEeSanjege.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/NaaEeSanjege.jpg') }}"
-                        alt="Naa Ee Sanjege">
+                        alt="Naa Ee Sanjege"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Naa Ee Sanjege</h3>
-                    <p>Siddhanth</p>
+
+                    <h3>
+                        Naa Ee Sanjege
+                    </h3>
+
+                    <p>
+                        Siddhanth
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -582,59 +1178,78 @@
             </div>
 
 
-            <!-- 7. PERFECT -->
+
+            <!-- SONG 7 -->
 
             <div
                 class="song-card"
                 data-song="Perfect"
                 data-artist="Ed Sheeran"
                 data-file="Perfect.mp3"
-                data-image="Perfect.jpg">
+                data-image="Perfect.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/Perfect.jpg') }}"
-                        alt="Perfect">
+                        alt="Perfect"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Perfect</h3>
-                    <p>Ed Sheeran</p>
+
+                    <h3>
+                        Perfect
+                    </h3>
+
+                    <p>
+                        Ed Sheeran
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -642,59 +1257,78 @@
             </div>
 
 
-            <!-- 8. UNTIL I FOUND YOU -->
+
+            <!-- SONG 8 -->
 
             <div
                 class="song-card"
                 data-song="Until I Found You"
                 data-artist="Stephen Sanchez"
                 data-file="UntilIFoundYou.mp3"
-                data-image="UntilIFoundYou.jpg">
+                data-image="UntilIFoundYou.jpg"
+            >
 
                 <div class="poster">
 
                     <img
                         src="{{ url_for('static', filename='images/UntilIFoundYou.jpg') }}"
-                        alt="Until I Found You">
+                        alt="Until I Found You"
+                    >
 
                     <div class="poster-gradient"></div>
 
                     <button
                         type="button"
                         class="heart"
-                        onclick="favoriteSong(this)">
+                        onclick="favoriteSong(this)"
+                    >
                         ♡
                     </button>
 
                     <button
                         type="button"
                         class="poster-play"
-                        onclick="playCard(this)">
+                        onclick="playCard(this)"
+                    >
                         ▶
                     </button>
 
                 </div>
 
                 <div class="song-info">
-                    <h3>Until I Found You</h3>
-                    <p>Stephen Sanchez</p>
+
+                    <h3>
+                        Until I Found You
+                    </h3>
+
+                    <p>
+                        Stephen Sanchez
+                    </p>
+
                 </div>
 
                 <div class="card-buttons">
 
-                    <button type="button" onclick="playCard(this)">
+                    <button
+                        type="button"
+                        onclick="playCard(this)"
+                    >
                         ▶ Play
                     </button>
 
-                    <button type="button" onclick="queueCard(this)">
+                    <button
+                        type="button"
+                        onclick="queueCard(this)"
+                    >
                         ＋ Queue
                     </button>
 
                     <button
                         type="button"
                         class="playlist-button"
-                        onclick="addCardToPlaylist(this)">
-                        🎵 Playlist
+                        title="Add to My Playlist"
+                    >
+                        ＋ Playlist
                     </button>
 
                 </div>
@@ -706,26 +1340,45 @@
     </section>
 
 
+
     <!-- =====================================================
          FAVORITES
          ===================================================== -->
 
-    <section class="favorites-section" id="favorites">
+    <section
+        class="favorites-section"
+        id="favorites"
+    >
 
         <div class="section-header">
 
             <div>
-                <span>YOUR PICKS</span>
-                <h2>♡ Favorites</h2>
+
+                <span>
+                    YOUR PICKS
+                </span>
+
+                <h2>
+                    ♡ Favorites
+                </h2>
+
             </div>
 
         </div>
 
-        <div id="favoritesBox" class="empty-box">
 
-            <div class="empty-icon">♡</div>
+        <div
+            id="favoritesBox"
+            class="empty-box"
+        >
 
-            <b>No favorite songs yet</b>
+            <div class="empty-icon">
+                ♡
+            </div>
+
+            <b>
+                No favorite songs yet
+            </b>
 
             <small>
                 Tap ♡ on a song to add it here.
@@ -736,29 +1389,41 @@
     </section>
 
 
+
     <!-- =====================================================
          QUEUE
          ===================================================== -->
 
-    <section class="queue-section" id="queue">
+    <section
+        class="queue-section"
+        id="queue"
+    >
 
         <div class="queue-header">
 
             <div>
-                <span>UP NEXT</span>
-                <h2>♫ Your Queue</h2>
+
+                <span>
+                    UP NEXT
+                </span>
+
+                <h2>
+                    ♫ Your Queue
+                </h2>
+
             </div>
+
 
             <button
                 type="button"
                 class="clear-button"
-                onclick="clearQueue()">
-
+                onclick="clearQueue()"
+            >
                 🗑 Empty the Vibe
-
             </button>
 
         </div>
+
 
         <div class="queue-panel">
 
@@ -774,13 +1439,18 @@
 
             </div>
 
+
             <div id="queueBox">
 
                 <div class="empty-box">
 
-                    <div class="empty-icon">≋</div>
+                    <div class="empty-icon">
+                        ≋
+                    </div>
 
-                    <b>Your queue is empty</b>
+                    <b>
+                        Your queue is empty
+                    </b>
 
                     <small>
                         Add songs above and they'll appear here.
@@ -797,17 +1467,27 @@
 </main>
 
 
+
 <!-- =========================================================
      BOTTOM PLAYER
      ========================================================= -->
 
-<div class="player" id="player">
+<div
+    class="player"
+    id="player"
+>
 
     <div class="player-song">
 
-        <div class="mini-poster" id="miniPoster">
+        <div
+            class="mini-poster"
+            id="miniPoster"
+        >
 
-            <div class="mini-placeholder" id="miniPlaceholder">
+            <div
+                class="mini-placeholder"
+                id="miniPlaceholder"
+            >
 
                 <div class="mini-glow"></div>
 
@@ -821,17 +1501,25 @@
 
                 </div>
 
-                <span class="mini-sparkle sparkle-one">✦</span>
-                <span class="mini-sparkle sparkle-two">♡</span>
+                <span class="mini-sparkle sparkle-one">
+                    ✦
+                </span>
+
+                <span class="mini-sparkle sparkle-two">
+                    ♡
+                </span>
 
             </div>
+
 
             <img
                 id="playerPoster"
                 src=""
-                alt="Current song">
+                alt="Current song"
+            >
 
         </div>
+
 
         <div class="player-song-text">
 
@@ -848,15 +1536,24 @@
     </div>
 
 
+
     <div class="player-middle">
 
         <div class="controls">
 
-            <button type="button" onclick="shuffle()" title="Shuffle">
+            <button
+                type="button"
+                onclick="shuffle()"
+                title="Shuffle"
+            >
                 ⤨
             </button>
 
-            <button type="button" onclick="previousSong()" title="Previous">
+            <button
+                type="button"
+                onclick="previousSong()"
+                title="Previous"
+            >
                 |◀
             </button>
 
@@ -864,11 +1561,16 @@
                 type="button"
                 class="main-play"
                 id="mainPlay"
-                onclick="togglePlay()">
+                onclick="togglePlay()"
+            >
                 ▶
             </button>
 
-            <button type="button" onclick="nextSong()" title="Next">
+            <button
+                type="button"
+                onclick="nextSong()"
+                title="Next"
+            >
                 ▶|
             </button>
 
@@ -876,11 +1578,13 @@
                 type="button"
                 id="repeatButton"
                 onclick="repeatSong()"
-                title="Repeat">
+                title="Repeat"
+            >
                 ↻
             </button>
 
         </div>
+
 
         <div class="progress">
 
@@ -894,7 +1598,8 @@
                 min="0"
                 max="100"
                 value="0"
-                step="0.1">
+                step="0.1"
+            >
 
             <span id="duration">
                 0:00
@@ -905,9 +1610,12 @@
     </div>
 
 
+
     <div class="volume">
 
-        <span id="volumeIcon">🔊</span>
+        <span id="volumeIcon">
+            🔊
+        </span>
 
         <input
             type="range"
@@ -915,19 +1623,38 @@
             min="0"
             max="1"
             step="0.01"
-            value="0.8">
+            value="0.8"
+        >
 
     </div>
+
 
     <audio id="audio"></audio>
 
 </div>
 
 
-<div class="toast" id="toast"></div>
+
+<!-- =========================================================
+     TOAST
+     ========================================================= -->
+
+<div
+    class="toast"
+    id="toast"
+></div>
 
 
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script
+    src="{{ url_for('static', filename='js/app.js') }}"
+></script>
+
 
 </body>
+
 </html>
