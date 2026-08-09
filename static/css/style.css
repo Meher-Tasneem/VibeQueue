@@ -1,5 +1,6 @@
 /* =========================================================
    VIBEQUEUE — COMPLETE STYLE.CSS
+   DESKTOP + MOBILE SIDEBAR
    ========================================================= */
 
 * {
@@ -32,8 +33,7 @@ body {
     top: 0;
     bottom: 0;
     width: 245px;
-    background:
-        linear-gradient(180deg, #15101a 0%, #0c0b11 100%);
+    background: linear-gradient(180deg, #15101a 0%, #0c0b11 100%);
     border-right: 1px solid rgba(255,255,255,.07);
     z-index: 100;
     display: flex;
@@ -167,12 +167,11 @@ nav {
     margin: 18px;
     padding: 15px;
     border-radius: 16px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,122,181,.10),
-            rgba(120,92,255,.07)
-        );
+    background: linear-gradient(
+        135deg,
+        rgba(255,122,181,.10),
+        rgba(120,92,255,.07)
+    );
     border: 1px solid rgba(255,255,255,.06);
     display: flex;
     gap: 11px;
@@ -324,6 +323,10 @@ nav {
     transform: translateY(-2px);
 }
 
+/* =========================================================
+   VINYL
+   ========================================================= */
+
 .vinyl-area {
     position: absolute;
     right: 7%;
@@ -362,7 +365,9 @@ nav {
 }
 
 @keyframes vinylSpin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .music-note {
@@ -371,16 +376,32 @@ nav {
     animation: floatNote 3s ease-in-out infinite;
 }
 
-.note1 { right: 0; top: 20px; font-size: 28px; }
-.note2 { left: 10px; bottom: 35px; font-size: 22px; }
-.note3 { right: 10px; bottom: 10px; font-size: 17px; }
+.note1 {
+    right: 0;
+    top: 20px;
+    font-size: 28px;
+}
+
+.note2 {
+    left: 10px;
+    bottom: 35px;
+    font-size: 22px;
+}
+
+.note3 {
+    right: 10px;
+    bottom: 10px;
+    font-size: 17px;
+}
 
 @keyframes floatNote {
-    50% { transform: translateY(-12px); }
+    50% {
+        transform: translateY(-12px);
+    }
 }
 
 /* =========================================================
-   SECTION
+   SECTIONS
    ========================================================= */
 
 .songs-section,
@@ -428,8 +449,7 @@ nav {
     min-width: 0;
     padding: 10px;
     border-radius: 20px;
-    background:
-        linear-gradient(145deg,#15131a,#0f0e14);
+    background: linear-gradient(145deg,#15131a,#0f0e14);
     border: 1px solid rgba(255,255,255,.055);
     transition: .3s ease;
 }
@@ -494,7 +514,9 @@ nav {
 }
 
 @keyframes heartPop {
-    50% { transform: scale(1.35); }
+    50% {
+        transform: scale(1.35);
+    }
 }
 
 .poster-play {
@@ -658,9 +680,17 @@ nav {
     background: #ff8cbd;
 }
 
-.queue-wave i:nth-child(2) { height: 21px; }
-.queue-wave i:nth-child(3) { height: 9px; }
-.queue-wave i:nth-child(4) { height: 17px; }
+.queue-wave i:nth-child(2) {
+    height: 21px;
+}
+
+.queue-wave i:nth-child(3) {
+    height: 9px;
+}
+
+.queue-wave i:nth-child(4) {
+    height: 17px;
+}
 
 /* =========================================================
    BOTTOM PLAYER
@@ -980,11 +1010,13 @@ input[type="range"] {
 }
 
 /* =========================================================
-   MOBILE NAVIGATION
+   MOBILE NAV
+   =========================================================
+   HIDDEN because sidebar remains visible on phone.
    ========================================================= */
 
 .mobile-nav {
-    display: none;
+    display: none !important;
 }
 
 /* =========================================================
@@ -1018,154 +1050,299 @@ input[type="range"] {
 }
 
 /* =========================================================
-   TABLET + MOBILE
+   PHONE / SMALL TABLET
    ========================================================= */
 
 @media (max-width: 800px) {
 
+    /* KEEP SIDEBAR ON LEFT */
+
     .sidebar {
-        display: none;
+        display: flex;
+        width: 175px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
+    .sidebar-content {
+        padding: 20px 10px;
+        width: 100%;
+    }
+
+    .logo {
+        gap: 8px;
+        margin-bottom: 25px;
+    }
+
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 11px;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .logo h1 {
+        font-size: 16px;
+    }
+
+    .logo span {
+        font-size: 6px;
+        letter-spacing: 1px;
+    }
+
+    nav {
+        gap: 4px;
+    }
+
+    .nav-item {
+        gap: 9px;
+        padding: 11px 9px;
+        font-size: 12px;
+    }
+
+    .nav-item span {
+        font-size: 17px;
+    }
+
+    .library {
+        margin-top: 25px;
+    }
+
+    .library-title {
+        padding: 0 7px 9px;
+    }
+
+    .library-title span {
+        font-size: 7px;
+        letter-spacing: 1px;
+    }
+
+    .library-title button {
+        width: 22px;
+        height: 22px;
+        font-size: 15px;
+    }
+
+    .library-item {
+        padding: 10px 7px;
+        font-size: 11px;
+    }
+
+    .sidebar-bottom {
+        margin: 10px;
+        padding: 10px;
+        gap: 7px;
+    }
+
+    .side-note {
+        font-size: 17px;
+    }
+
+    .sidebar-bottom b {
+        font-size: 8px;
+    }
+
+    .sidebar-bottom small {
+        font-size: 7px;
+    }
+
+    /* MAIN STAYS BESIDE SIDEBAR */
+
     .main {
-        margin-left: 0;
-        padding: 0 15px 190px;
+        margin-left: 175px;
+        padding: 0 10px 180px;
     }
 
     .topbar {
-        height: 75px;
+        height: 68px;
     }
 
     .search {
         width: 100%;
+        height: 40px;
+        padding: 0 10px;
+    }
+
+    .search span {
+        font-size: 18px;
+    }
+
+    .search input {
+        font-size: 11px;
     }
 
     .profile {
         display: none;
     }
 
+    /* HERO */
+
     .hero {
-        min-height: 390px;
-        padding: 32px 25px;
+        min-height: 380px;
+        padding: 27px 18px;
+        border-radius: 20px;
         align-items: flex-start;
     }
 
+    .welcome {
+        font-size: 7px;
+        letter-spacing: 1.5px;
+    }
+
     .hero h2 {
-        font-size: 43px;
+        font-size: 34px;
+        letter-spacing: -2px;
+        line-height: 1;
     }
 
     .hero p {
-        max-width: 90%;
+        font-size: 11px;
+        line-height: 1.5;
+        margin: 15px 0 20px;
+    }
+
+    .start-button {
+        padding: 11px 14px;
+        font-size: 10px;
     }
 
     .vinyl-area {
-        right: -55px;
-        bottom: -70px;
-        transform: scale(.7);
-        opacity: .75;
+        right: -105px;
+        bottom: -90px;
+        transform: scale(.58);
+        opacity: .7;
+    }
+
+    /* SONGS */
+
+    .songs-section,
+    .favorites-section,
+    .queue-section {
+        padding-top: 35px;
+    }
+
+    .section-header,
+    .queue-header {
+        margin-bottom: 15px;
+    }
+
+    .section-header h2,
+    .queue-header h2 {
+        font-size: 20px;
     }
 
     .song-grid {
-        grid-template-columns: repeat(2,1fr);
-        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 9px;
+    }
+
+    .song-card {
+        padding: 6px;
+        border-radius: 14px;
+    }
+
+    .poster {
+        border-radius: 11px;
     }
 
     .poster-play {
         opacity: 1;
+        width: 36px;
+        height: 36px;
+        bottom: 8px;
     }
 
-    .mobile-nav {
-        position: fixed;
-        left: 10px;
-        right: 10px;
-        bottom: 105px;
-        height: 62px;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        padding: 5px;
-        z-index: 180;
-        border-radius: 20px;
-        background:
-            linear-gradient(
-                135deg,
-                rgba(48,18,42,.97),
-                rgba(20,8,18,.98)
-            );
-        border: 1px solid rgba(255,170,211,.18);
-        box-shadow:
-            0 15px 45px rgba(0,0,0,.55),
-            0 0 30px rgba(255,93,156,.08);
-        backdrop-filter: blur(25px);
+    .heart {
+        width: 29px;
+        height: 29px;
+        font-size: 16px;
+        top: 6px;
+        right: 6px;
     }
 
-    .mobile-nav a,
-    .mobile-nav button {
-        flex: 1;
-        height: 50px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+    .song-info {
+        padding: 9px 2px 6px;
+    }
+
+    .song-info h3 {
+        font-size: 10px;
+    }
+
+    .song-info p {
+        font-size: 8px;
+        margin-top: 3px;
+    }
+
+    .card-buttons {
         gap: 3px;
-        border: 0;
-        border-radius: 14px;
-        background: transparent;
-        color: #a98a9b;
-        text-decoration: none;
-        font-family: inherit;
-        font-size: 9px;
-        cursor: pointer;
     }
 
-    .mobile-nav a span,
-    .mobile-nav button span {
-        font-size: 19px;
-        line-height: 1;
+    .card-buttons button {
+        padding: 7px 2px;
+        font-size: 7px;
     }
 
-    .mobile-nav a:hover,
-    .mobile-nav a:active,
-    .mobile-nav button:hover,
-    .mobile-nav button:active {
-        color: #fff;
-        background: rgba(255,137,187,.10);
+    /* QUEUE */
+
+    .queue-top {
+        padding: 12px;
+        font-size: 7px;
     }
 
-    .mobile-nav a:first-child {
-        color: #ffafd0;
-        background:
-            linear-gradient(
-                135deg,
-                rgba(255,126,181,.18),
-                rgba(255,126,181,.05)
-            );
+    .queue-song {
+        padding: 12px;
+        gap: 9px;
     }
+
+    .queue-song b {
+        font-size: 10px;
+    }
+
+    .queue-song small {
+        font-size: 8px;
+    }
+
+    .clear-button {
+        font-size: 8px;
+        padding: 7px 9px;
+    }
+
+    /* PLAYER */
 
     .player {
-        left: 7px;
+        left: 182px;
         right: 7px;
-        bottom: 10px;
-        width: calc(100% - 14px);
+        bottom: 8px;
+        width: auto;
         grid-template-columns: 1fr;
-        gap: 6px;
-        min-height: 76px;
-        padding: 8px 12px;
-        border-radius: 17px;
+        gap: 4px;
+        min-height: 70px;
+        padding: 7px 10px;
+        border-radius: 15px;
     }
 
-    .player-song {
-        width: 100%;
+    .mini-poster {
+        width: 44px;
+        height: 44px;
+    }
+
+    .player-song-text b {
+        font-size: 10px;
+    }
+
+    .player-song-text small {
+        font-size: 8px;
     }
 
     .player-middle {
         position: absolute;
-        right: 12px;
-        top: 12px;
+        right: 10px;
+        top: 10px;
     }
 
     .controls {
-        gap: 5px;
+        gap: 3px;
     }
 
     .controls button:not(.main-play) {
@@ -1173,15 +1350,21 @@ input[type="range"] {
     }
 
     .controls .main-play {
-        width: 38px;
-        height: 38px;
+        width: 34px;
+        height: 34px;
+        font-size: 11px;
     }
 
     .progress {
         position: absolute;
-        left: 12px;
-        right: 12px;
-        bottom: 5px;
+        left: 10px;
+        right: 10px;
+        bottom: 4px;
+        margin-top: 0;
+    }
+
+    .progress span {
+        font-size: 7px;
     }
 
     .volume {
@@ -1189,155 +1372,189 @@ input[type="range"] {
     }
 
     .player-song-text {
-        padding-right: 55px;
+        padding-right: 45px;
     }
 
     .toast {
-        bottom: 180px;
+        bottom: 90px;
     }
 }
 
 /* =========================================================
-   PHONE
+   SMALL PHONE
    ========================================================= */
 
 @media (max-width: 600px) {
 
+    .sidebar {
+        width: 155px;
+    }
+
+    .sidebar-content {
+        padding: 18px 8px;
+    }
+
+    .logo h1 {
+        font-size: 14px;
+    }
+
+    .logo span {
+        font-size: 5px;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    .nav-item {
+        padding: 10px 7px;
+        font-size: 10px;
+        gap: 7px;
+    }
+
+    .nav-item span {
+        font-size: 15px;
+    }
+
+    .library-item {
+        font-size: 9px;
+        padding: 9px 6px;
+    }
+
+    .library-title span {
+        font-size: 6px;
+    }
+
+    .sidebar-bottom {
+        margin: 7px;
+        padding: 8px;
+    }
+
+    .sidebar-bottom b {
+        font-size: 7px;
+    }
+
+    .sidebar-bottom small {
+        font-size: 6px;
+    }
+
     .main {
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 190px;
+        margin-left: 155px;
+        padding-left: 7px;
+        padding-right: 7px;
+        padding-bottom: 170px;
     }
 
     .topbar {
-        height: 68px;
+        height: 62px;
     }
 
     .hero {
-        min-height: 390px;
-        border-radius: 23px;
-        padding: 28px 20px;
-    }
-
-    .welcome {
-        font-size: 8px;
-        letter-spacing: 2px;
+        min-height: 350px;
+        padding: 24px 15px;
+        border-radius: 18px;
     }
 
     .hero h2 {
-        font-size: 39px;
-        letter-spacing: -2px;
-        max-width: 320px;
+        font-size: 29px;
     }
 
     .hero p {
-        font-size: 12px;
-        line-height: 1.6;
+        font-size: 9px;
+        max-width: 95%;
     }
 
     .start-button {
-        padding: 12px 17px;
-        font-size: 12px;
+        padding: 9px 11px;
+        font-size: 8px;
     }
 
     .vinyl-area {
-        right: -85px;
-        bottom: -80px;
-        transform: scale(.63);
+        right: -115px;
+        bottom: -105px;
+        transform: scale(.48);
     }
 
     .songs-section,
     .favorites-section,
     .queue-section {
-        padding-top: 38px;
+        padding-top: 30px;
     }
 
     .section-header h2,
     .queue-header h2 {
-        font-size: 22px;
+        font-size: 17px;
+    }
+
+    .section-header span,
+    .queue-header span {
+        font-size: 7px;
     }
 
     .song-grid {
-        grid-template-columns: repeat(2,1fr);
-        gap: 10px;
+        gap: 7px;
     }
 
     .song-card {
-        padding: 7px;
-        border-radius: 15px;
+        padding: 5px;
+        border-radius: 12px;
     }
 
-    .song-info {
-        padding: 10px 2px 7px;
+    .poster {
+        border-radius: 9px;
     }
 
     .song-info h3 {
-        font-size: 11px;
+        font-size: 8px;
     }
 
     .song-info p {
-        font-size: 9px;
-    }
-
-    .card-buttons {
-        gap: 4px;
+        font-size: 7px;
     }
 
     .card-buttons button {
-        padding: 8px 2px;
-        font-size: 8px;
+        font-size: 6px;
+        padding: 6px 1px;
     }
 
     .heart {
-        width: 31px;
-        height: 31px;
-        font-size: 17px;
-        top: 7px;
-        right: 7px;
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
     }
 
     .poster-play {
+        width: 32px;
+        height: 32px;
+        font-size: 11px;
+    }
+
+    .player {
+        left: 162px;
+        right: 5px;
+        bottom: 6px;
+        min-height: 64px;
+        padding: 6px 8px;
+    }
+
+    .mini-poster {
         width: 39px;
         height: 39px;
-        bottom: 9px;
     }
 
-    .mobile-nav {
-        left: 7px;
-        right: 7px;
-        bottom: 103px;
-        height: 60px;
-        border-radius: 19px;
-    }
-
-    .mobile-nav a,
-    .mobile-nav button {
-        font-size: 8px;
-        height: 49px;
-    }
-
-    .mobile-nav a span,
-    .mobile-nav button span {
-        font-size: 18px;
-    }
-
-    .queue-top {
-        padding: 13px;
-        font-size: 8px;
-    }
-
-    .queue-song {
-        padding: 13px;
-        gap: 10px;
-    }
-
-    .clear-button {
+    .player-song-text b {
         font-size: 9px;
-        padding: 8px 10px;
     }
 
-    .library-modal {
-        border-radius: 20px;
+    .player-song-text small {
+        font-size: 7px;
+    }
+
+    .controls .main-play {
+        width: 31px;
+        height: 31px;
     }
 }
 
@@ -1347,30 +1564,50 @@ input[type="range"] {
 
 @media (max-width: 380px) {
 
+    .sidebar {
+        width: 140px;
+    }
+
+    .main {
+        margin-left: 140px;
+    }
+
+    .logo {
+        margin-bottom: 20px;
+    }
+
+    .logo h1 {
+        font-size: 12px;
+    }
+
+    .logo-icon {
+        width: 29px;
+        height: 29px;
+        font-size: 16px;
+    }
+
+    .nav-item {
+        font-size: 9px;
+        padding: 9px 5px;
+    }
+
+    .library-item {
+        font-size: 8px;
+    }
+
+    .hero {
+        min-height: 330px;
+    }
+
     .hero h2 {
-        font-size: 34px;
+        font-size: 26px;
     }
 
     .song-grid {
-        gap: 7px;
+        gap: 5px;
     }
 
-    .song-card {
-        padding: 6px;
-    }
-
-    .mobile-nav {
-        bottom: 101px;
-        height: 57px;
-    }
-
-    .mobile-nav a,
-    .mobile-nav button {
-        font-size: 7px;
-    }
-
-    .mobile-nav a span,
-    .mobile-nav button span {
-        font-size: 17px;
+    .player {
+        left: 147px;
     }
 }
